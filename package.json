@@ -6,7 +6,7 @@
 	"scripts": {
 		"test": "jest",
 		"watch": "concurrently --kill-others 'yarn test --watchAll' 'yarn --cwd mjss build --watch' 'yarn --cwd less2mjss build --watch' 'yarn --cwd css-utils build --watch'",
-		"link": "yarn --cwd mjss link && yarn --cwd less2mjss",
+		"link-all": "yarn --cwd mjss link && yarn --cwd less2mjss"
 	},
 	"jest": {
 		"transform": {
