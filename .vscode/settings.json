@@ -1,0 +1,13 @@
+{
+    "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typscript"
+  ],
+  "files.exclude": {
+    "mjss": true,
+    "less2mjss": true,
+    "css-utils": true,
+    "sjss": true
+  }
+}
