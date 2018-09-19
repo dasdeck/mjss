@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "declaration": true,
+    "strict": false,
+    "moduleResolution": "node"
+  },
+  "exclude": [
+    "dist",
+    "test"
+  ]
+}
