@@ -4,7 +4,7 @@
 import Extend from '../src/plugins/Extend';
 
 export default {
-    options: () => ({plugins: [new Extend]}),
+    options: test => ({plugins: [new Extend(test.opts)]}),
     tests: [
         {
             desc: 'extend',
@@ -40,6 +40,28 @@ export default {
         },
         {
             desc: 'extend extended',
+            jss: {
+                '.target': {
+                    color: 'red'
+                  },
+
+                  '.extender1': {
+                    '@extend .extender2': {},
+                    'color': 'red'
+                  },
+
+                  '.extender2': {
+                    '@extend .target': {},
+                    'color': 'red'
+                  }
+
+
+            },
+            css: '.target, .extender2, .extender1{color:red;}.extender1{color:red;}.extender2, .extender1{color:red;}'
+        },
+        {
+            desc: 'assumeStaticSelectors',
+            opts: {assumeStaticSelectors: true},
             jss: {
                 '.target': {
                     color: 'red'

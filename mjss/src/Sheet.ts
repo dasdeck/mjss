@@ -1,5 +1,8 @@
 import RuleList from './RuleList';
 import RuleListRenderer from './RuleListRenderer';
+import { forEach } from 'lodash';
+import ContainerRule from './ContainerRule';
+import Rule from './Rule';
 
 export default class Sheet {
 
@@ -15,7 +18,20 @@ export default class Sheet {
 
         this.rules = new RuleList(this);
 
+        this.iterateAst(this.rules, rule => {
+            this.hook('onReady', rule);
+        });
 
+
+    }
+
+    iterateAst(list:RuleList, action:Function) {
+        forEach(list.rules, (rule:Rule) => {
+            action(rule);
+            if (rule instanceof ContainerRule) {
+                this.iterateAst(rule.rules, action);
+            }
+        })
     }
 
 

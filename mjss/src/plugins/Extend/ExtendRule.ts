@@ -1,8 +1,9 @@
 import Rule from "../../Rule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import { patternExtend } from "./lib";
+import Extend from ".";
 
-
+let id = 1;
 export default class ExtendRule extends Rule {
 
     className: string
@@ -10,9 +11,15 @@ export default class ExtendRule extends Rule {
     replace: RegExp
     currentParrent: ContainerRuleRenderer
     transformations: Array<Function> = []
+    extend: Extend
+    id: number
 
-    constructor(sheet, data, key, parent) {
+    constructor(sheet, data, key, parent, extend) {
         super(sheet, data, key, parent);
+
+        this.extend = extend;
+
+        this.id = id++;
 
         const className = this.key.substr(patternExtend.length);
         const prefix = className[0] === '.' ? '.' : '';
@@ -23,9 +30,19 @@ export default class ExtendRule extends Rule {
         } else {
             this.search = new RegExp(/(?:,|^)\s*prefix(?:\b)search(?:\b\s*(?:,|$))/g.source.replace('prefix', prefix).replace('search', search));
         }
+
         this.replace  = new RegExp(this.search.source, 'g');
 
+    }
 
+    mark(rule) {
+        const match = rule.key && rule.key.match && rule.key.match(this.search);
+        if (match) {
+
+            rule._extend = rule._extend || {};
+            rule._extend[this.id] = this;
+        }
+        // if(rule._extend) debugger;
     }
 
     render(r:ContainerRuleRenderer) {
@@ -46,7 +63,14 @@ export default class ExtendRule extends Rule {
 
     collect(renderer) {
 
-        if (renderer.key && renderer.key.match(this.search)) {
+        const match = this.extend.options.assumeStaticSelectors ?
+        renderer.rule._extend && renderer.rule._extend[this.id] :
+        renderer.key && renderer.key.match(this.search);
+
+
+
+
+        if (match) {
 
             this.transformations.push(() => {
                 const targetSelector = this.getTargetSelector();
