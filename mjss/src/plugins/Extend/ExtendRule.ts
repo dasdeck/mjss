@@ -4,13 +4,43 @@ import { patternExtend } from "./lib";
 import Extend from ".";
 
 let id = 1;
+
+class Transformation {
+
+    rule: ExtendRule
+    renderer: ContainerRuleRenderer
+
+    constructor(rule, renderer) {
+        this.rule = rule;
+        this.renderer = renderer;
+    }
+
+    apply() {
+        const targetSelector = this.rule.getTargetSelector();
+        if (targetSelector) {
+
+            const selectors = this.renderer.key.split(', ');
+            if (this.rule.value.all) {
+                selectors.forEach(selector => {
+                    if (selector.match(this.rule.search)) {
+                        selectors.push({toString:() => selector.replace(this.rule.className, targetSelector)});
+                    }
+                });
+            } else {
+                selectors.push(targetSelector);
+            }
+
+            this.renderer.key = selectors.join(', ');
+        }
+    }
+}
 export default class ExtendRule extends Rule {
 
     className: string
     search: RegExp
     replace: RegExp
     currentParrent: ContainerRuleRenderer
-    transformations: Array<Function> = []
+    transformations: Array<any> = []
     extend: Extend
     id: number
 
@@ -42,7 +72,6 @@ export default class ExtendRule extends Rule {
             rule._extend = rule._extend || {};
             rule._extend[this.id] = this;
         }
-        // if(rule._extend) debugger;
     }
 
     render(r:ContainerRuleRenderer) {
@@ -56,8 +85,7 @@ export default class ExtendRule extends Rule {
     }
 
     apply() {
-        // console.log({trans: this.transformations.length, selector: this.getTargetSelector()});
-        this.transformations.forEach(t => t());
+        this.transformations.forEach(t => t.apply());
         this.transformations = [];
     }
 
@@ -67,30 +95,9 @@ export default class ExtendRule extends Rule {
         renderer.rule._extend && renderer.rule._extend[this.id] :
         renderer.key && renderer.key.match(this.search);
 
-
-
-
         if (match) {
 
-            this.transformations.push(() => {
-                const targetSelector = this.getTargetSelector();
-                if (targetSelector) {
-
-                    const selectors = renderer.key.split(', ');
-                    if (this.value.all) {
-                        selectors.forEach(selector => {
-                            if (selector.match(this.search)) {
-                                selectors.push({toString:() => selector.replace(this.className, targetSelector)});
-                            }
-                        });
-                    } else {
-                        selectors.push(targetSelector);
-                    }
-
-                    renderer.key = selectors.join(', ');
-                }
-            });
-
+            this.transformations.push(new Transformation(this, renderer));
 
         }
 

@@ -10,7 +10,7 @@ export default class Sheet {
     data: any
     rules: RuleList
 
-    constructor(options: any, data = {}) {
+    constructor(options: any = {plugins: []}, data = {}) {
         this.options = options;
         this.data = data;
 

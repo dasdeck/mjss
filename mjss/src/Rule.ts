@@ -24,6 +24,10 @@ export default class Rule implements Renderable {
 
     }
 
+    valueOf() {
+        return this.value;
+    }
+
     render(renderer: RuleListRenderer) {
 
         const ruleRenderer = new RuleRender(this, renderer);
