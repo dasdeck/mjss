@@ -9,10 +9,30 @@ export default class Sheet {
     options: any
     data: any
     rules: RuleList
+    hooks: any
 
     constructor(options: any = {plugins: []}, data = {}) {
         this.options = options;
         this.data = data;
+
+        this.hooks = [
+            'onInit',
+            'onReady',
+            'onCreate',
+            'createRule',
+            'onBeforeRender',
+            'onOutput',
+            'onProcess',
+            'onBeforeOutput'
+        ].reduce((res, hookName) => {
+
+            const hooks = this.options.plugins.filter(plugin => plugin[hookName]).map(plugin => plugin[hookName].bind(plugin));
+            if (hooks.length) {
+                res[hookName] = hooks;
+            }
+            return res;
+        }, {});
+
 
         this.hook('onInit', this);
 
@@ -21,7 +41,6 @@ export default class Sheet {
         this.iterateAst(this.rules, rule => {
             this.hook('onReady', rule);
         });
-
 
     }
 
@@ -37,11 +56,13 @@ export default class Sheet {
 
     hook(name, ...args) {
 
-        for (let i = 0; i < this.options.plugins.length; i++) {
-            const plugin = this.options.plugins[i];
-            const res = plugin[name] && plugin[name](...args);
-            if (res) {
-                return res;
+        const hooks = this.hooks[name];
+        if (hooks) {
+            for (let i = 0; i < hooks.length; i++) {
+                const res = hooks[i](...args);
+                if (res) {
+                    return res;
+                }
             }
         }
     }

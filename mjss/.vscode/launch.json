@@ -14,7 +14,6 @@
             "internalConsoleOptions": "neverOpen",
             "skipFiles": [
                 "node_modules/**/*.js",
-                "lib/**/*.js"
               ]
         }
     ]
