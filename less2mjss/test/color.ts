@@ -16,5 +16,7 @@ export default {
         'mix ': '.c{color:mix(red, blue, 10%)}',
         'tint ': '.c{color:tint(red, 10%)}',
         'spin ': '.c{color:spin(red, 10%)}',
+        "edge1": '.c{color:tint(#faa05a, 45%)}',
+        "edge2": '.c{color:lighten(tint(#faa05a, 45%), 15%)}'
     }
 }

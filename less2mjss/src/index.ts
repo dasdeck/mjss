@@ -468,8 +468,6 @@ export function patchAST(rootNode, options) {
 
                 } else {
 
-                    if(name == 'font-family') debugger;
-
                     const finalName = nameContext.dynamic || isPlainVariableRuleName ? '`${' + name + '}`' : name;
 
                     // const finalName = name.includes('@{') ? `\`${name.replace(/@{(.*?)}/g, (line, name) => `\${env('${name}')}`)}\`` : name;
