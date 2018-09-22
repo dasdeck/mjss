@@ -1,24 +1,9 @@
 // import * as Color from 'color';
 import * as Color from 'tinycolor2';
 
-Color.prototype.alpha = function(val = false) {
-
-    if (val === false) {
-        return this.getAlpha();
-    } else {
-        return this.setAlpha(val);
-    }
-};
-Color.prototype.hsl = Color.prototype.toHsl;
-Color.prototype.hex = Color.prototype.toHex;
-Color.prototype.rgb = Color.prototype.toRgb;
 Color.prototype.toLessString = function() {
-    return (this.alpha() < 1 ? this.toRgbString() : ('#' + this.hex()).toLowerCase());
+    return (this.getAlpha() < 1 ? this.toRgbString() : ('#' + this.toHex()).toLowerCase());
 };
-
-// Color.prototype.toLessString = function() {
-//     return (this.alpha() < 1 ? this.rgb().toString() : this.hex().toLowerCase());
-// };
 
 /**
  * a set of functions emulating the behaviour of lesscss (% will be assumed to be normalized to 0-1)
@@ -36,52 +21,27 @@ Color.prototype.toLessString = function() {
 ]*/
 
 export function darken(color, amount) {
-    color = Color(color);
-
-    return color.darken(parseFloat(amount)).toLessString();
-
-    // scale values by 100 to get a floating point error similar to less!
-    // otherwise we get rounting errors
-
-    // color = color.hsl();
-    // color.color[2] = (color.color[2] / 100 - parseFloat(amount) / 100) * 100;
-
-    // return color.toLessString();
+    return Color(color).darken(parseFloat(amount)).toLessString();
 }
 
 export function lighten(color, amount) {
-    color = Color(color);
-
-    debugger;
-    return color.lighten(parseFloat(amount)).toLessString();
-
-    return darken(color, `-${amount}`);
+    return Color(color).lighten(parseFloat(amount)).toLessString();
 }
-
-
 
 export function fadeout(color, amount) {
     color = Color(color);
 
     amount = parseFloat(amount) / 100;
-    color = color.alpha(color.alpha() - amount);
+    color = color.setAlpha(color.getAlpha() - amount);
 
     return color.toLessString();
 }
 
 export function saturate(color, amount) {
-    // color = Color(color).hsl();
-    color = Color(color);
 
     amount = parseFloat(amount);
-    // color.color[1] += amount;
 
-    return color.saturate(amount).toLessString();
-}
-
-export function dataUri(mimetype, filePath) {
-
-    return mimetype + filePath;
+    return Color(color).saturate(amount).toLessString();
 }
 
 export function desaturate(color, amount) {
@@ -89,9 +49,7 @@ export function desaturate(color, amount) {
 }
 
 export function spin(color, amount) {
-    color = Color(color);
-    return color.spin(parseFloat(amount)).toLessString();
-    // return color.rotate(parseFloat(amount)).toLessString();
+    return Color(color).spin(parseFloat(amount)).toLessString();
 }
 
 export function tint(color, amount) {
@@ -99,19 +57,18 @@ export function tint(color, amount) {
 }
 
 export function mix(color, color2, amount = '50%') {
-    color = Color(color);
-    color2 = Color(color2);
-    // return color2.mix(color, parseFloat(amount) / 100).toLessString();
-    return Color.mix(color2, color, parseFloat(amount)-0.0001).toLessString();
+    return Color.mix(Color(color2), Color(color), parseFloat(amount)-0.0001).toLessString();
 }
 
 export function fade(color, amount) {
-    color = Color(color);
-    return color.alpha(parseFloat(amount) / 100).toLessString();
+    return Color(color).setAlpha(parseFloat(amount) / 100).toLessString();
 }
 
 
 
+export function dataUri(mimetype, filePath) {
+    return mimetype + filePath;
+}
 
 export function floor(val) {
     return Math.floor(val) + (val.unit || '');
