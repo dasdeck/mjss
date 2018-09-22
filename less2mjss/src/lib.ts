@@ -12,7 +12,6 @@ export const operatorMap = {
 
 export const customMixinFunctions = {
     'svg-fill'({src, defaultColor, newColor, property = 'background-image'}) {
-
         return {
             [property]: `url(${src})`
         };
@@ -25,8 +24,6 @@ export const staticFunctions = {
 };
 
 export const functions = {
-    env(key) { return this[`${key}`]; },
-    nf: (name, ...args) => `${name}(${args.join(', ')})`,
     ...customMixinFunctions,
     ...lessFunctions,
     ...mapKeys(lessFunctions, (func, key) => func.name),

@@ -25,10 +25,6 @@ export default class UnitNumber {
         return this.val;
     }
 
-    toJSON() {
-        return this.toString();
-    }
-
     static create(value) {
 
         if (value instanceof UnitNumber) {

@@ -15,5 +15,6 @@ export default {
         'desaturate ': '.c{color:desaturate(blue, 10%)}',
         'mix ': '.c{color:mix(red, blue, 10%)}',
         'tint ': '.c{color:tint(red, 10%)}',
+        'spin ': '.c{color:spin(red, 10%)}',
     }
 }

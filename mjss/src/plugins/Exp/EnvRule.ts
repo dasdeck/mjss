@@ -42,6 +42,9 @@ export default class EnvRule extends ContainerRule {
         const self = this;
         this.context = {
             ...this.exp.options.context,
+            nf(name, ...args) {
+                return `${name}(${args.join(', ')})`
+            },
             env(name) {
                 return self.get(name);
             },

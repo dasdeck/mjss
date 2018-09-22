@@ -9,13 +9,18 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
 
     describe(name, () => {
 
-        block.tests.forEach(row => {
+        forEach(block.tests, (row, desc) => {
 
-            it(row.desc || row.expression, () => {
+            it(row.desc || desc || row.expression, () => {
 
                 const context = {...mapKeys(UnitNumber.operations, op => op.name), ...row.context};
                 const func = new Function('context', `with(context) { return ${row.expression}; }`);
-                expect(String(func(context))).toBe(row.result);
+
+                if(row.exception) {
+                    expect(() => String(func(context))).toThrowError(row.exception)
+                } else {
+                    expect(String(func(context))).toBe(row.result);
+                }
 
             });
 

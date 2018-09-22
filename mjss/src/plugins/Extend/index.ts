@@ -11,7 +11,7 @@ make shure not to midify keys after they have been extended
 
 export default class Extend {
 
-    extends: Array<ExtendRule> = []
+    extends: any = {}
     options: any
 
 
@@ -22,7 +22,7 @@ export default class Extend {
     onReady(rule) {
 
         if (this.options.assumeStaticSelectors) {
-            for (let i = 0; i < this.extends.length; i++) {
+            for (const i in this.extends) {
                 const extend = this.extends[i];
                 extend.mark(rule);
             }
@@ -32,23 +32,36 @@ export default class Extend {
     createRule(sheet, rules, key, list) {
         if (startsWith(key, patternExtend)) {
             const rule = new ExtendRule(sheet, rules, key, list.rule, this);
-            this.extends.push(rule);
+            this.extends[rule.id] = rule;
             return rule;
         }
     }
 
     onProcess(renderer) {
 
-        for (let i = 0; i < this.extends.length; i++) {
-            const extend = this.extends[i];
-            extend.collect(renderer);
+        if (this.options.assumeStaticSelectors) {
+
+            if (renderer.rule._extend) {
+                for (const i in renderer.rule._extend) {
+                    this.extends[i].addTransform(renderer);
+                }
+            }
+
+        } else {
+
+            for (const i in this.extends) {
+                const extend = this.extends[i];
+                extend.collect(renderer);
+            }
+
         }
 
     }
 
     onBeforeOutput() {
 
-        for (let i = 0; i < this.extends.length; i++) {
+
+        for (const i in this.extends) {
             const extend = this.extends[i];
             extend.apply();
         }

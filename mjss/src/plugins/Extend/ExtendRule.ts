@@ -89,6 +89,10 @@ export default class ExtendRule extends Rule {
         this.transformations = [];
     }
 
+    addTransform(renderer) {
+        this.transformations.push(new Transformation(this, renderer));
+    }
+
     collect(renderer) {
 
         const match = this.extend.options.assumeStaticSelectors ?
@@ -96,9 +100,7 @@ export default class ExtendRule extends Rule {
         renderer.key && renderer.key.match(this.search);
 
         if (match) {
-
-            this.transformations.push(new Transformation(this, renderer));
-
+            this.addTransform(renderer);
         }
 
     }

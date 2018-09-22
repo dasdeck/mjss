@@ -62,11 +62,10 @@ export function patchAST(rootNode, options) {
                     res = args.join(' ');
                 } else if (context.dynamic) {
 
-                    // res = `${node.value.length === 1 ? args[0] : `$['_concat']('${args.join("', '")}')`}`;
                     res = concatArgs(node.value, node, sContext);
 
                 } else {
-                    res = args.join(' ');
+                    res = args.join(', ');
                 }
 
                 return res;
@@ -469,7 +468,8 @@ export function patchAST(rootNode, options) {
 
                 } else {
 
-                    // debugger
+                    if(name == 'font-family') debugger;
+
                     const finalName = nameContext.dynamic || isPlainVariableRuleName ? '`${' + name + '}`' : name;
 
                     // const finalName = name.includes('@{') ? `\`${name.replace(/@{(.*?)}/g, (line, name) => `\${env('${name}')}`)}\`` : name;
