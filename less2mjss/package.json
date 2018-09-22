@@ -26,7 +26,8 @@
 		"tinycolor2": "^1.4.1",
 		"ts-jest": "^23.1.4",
 		"typescript": "^3.0.3",
-		"typescript-eslint-parser": "^18.0.0"
+		"typescript-eslint-parser": "^18.0.0",
+		"uikit": "^3.0.0-rc.16"
 	},
 	"jest": {
 		"transform": {

@@ -18,7 +18,6 @@ export default class Sheet {
         this.hooks = [
             'onInit',
             'onReady',
-            'onCreate',
             'createRule',
             'onBeforeRender',
             'onOutput',

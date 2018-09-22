@@ -1,7 +1,7 @@
 // import * as Color from 'color';
 import * as Color from 'tinycolor2';
 
-Color.prototype.toLessString = function() {
+Color.prototype.toString = function() {
     return (this.getAlpha() < 1 ? this.toRgbString() : ('#' + this.toHex()).toLowerCase());
 };
 
@@ -21,11 +21,11 @@ Color.prototype.toLessString = function() {
 ]*/
 
 export function darken(color, amount) {
-    return Color(color).darken(parseFloat(amount)).toLessString();
+    return Color(color).darken(parseFloat(amount));
 }
 
 export function lighten(color, amount) {
-    return Color(color).lighten(parseFloat(amount)).toLessString();
+    return Color(color).lighten(parseFloat(amount));
 }
 
 export function fadeout(color, amount) {
@@ -34,14 +34,14 @@ export function fadeout(color, amount) {
     amount = parseFloat(amount) / 100;
     color = color.setAlpha(color.getAlpha() - amount);
 
-    return color.toLessString();
+    return color;
 }
 
 export function saturate(color, amount) {
 
     amount = parseFloat(amount);
 
-    return Color(color).saturate(amount).toLessString();
+    return Color(color).saturate(amount);
 }
 
 export function desaturate(color, amount) {
@@ -49,7 +49,7 @@ export function desaturate(color, amount) {
 }
 
 export function spin(color, amount) {
-    return Color(color).spin(parseFloat(amount)).toLessString();
+    return Color(color).spin(parseFloat(amount));
 }
 
 export function tint(color, amount) {
@@ -57,11 +57,11 @@ export function tint(color, amount) {
 }
 
 export function mix(color, color2, amount = '50%') {
-    return Color.mix(Color(color2), Color(color), parseFloat(amount)-0.0001).toLessString();
+    return Color.mix(Color(color2), Color(color), parseFloat(amount)-0.0001);
 }
 
 export function fade(color, amount) {
-    return Color(color).setAlpha(parseFloat(amount) / 100).toLessString();
+    return Color(color).setAlpha(parseFloat(amount) / 100);
 }
 
 

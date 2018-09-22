@@ -10,13 +10,21 @@ export default class Exp {
     options: any
     env: EnvRule
 
-    constructor(options = {forceUniqueKeys: false, context: {}, env: {}}) {
+    constructor(options = {forceUniqueKeys: false, cacheEnv: false, context: {}, env: {}}) {
         this.options = options;
     }
 
     onInit(sheet) {
         this.env = new EnvRule(sheet, this, sheet.data['@env']);
     }
+
+    onBeforeRender() {
+        if (this.options.cacheEnv) {
+
+            this.env.createCache();
+        }
+    }
+
 
     createRule(sheet, rules, key, parent) {
         if (key === '@env') {

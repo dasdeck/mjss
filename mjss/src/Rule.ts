@@ -20,8 +20,6 @@ export default class Rule implements Renderable {
         this.sheet = sheet;
         this.parent = parent;
 
-        this.sheet.hook('onCreate', this);
-
     }
 
     valueOf() {

@@ -17,8 +17,6 @@ export default class RuleList {
         this.rule = rule;
         this.rules = mapValues(data, (row, key) => this.createRule(row, key));
 
-        this.sheet.hook('onCreate', this);
-
     }
 
     createRule(data:any, key:string) {

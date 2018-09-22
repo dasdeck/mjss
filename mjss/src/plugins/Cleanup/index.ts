@@ -25,7 +25,7 @@ export default class Cleanup {
                 const list = value.match(/.* \/ .*? (:?[^\s"]+|"([^"]*))|[^\s"]+|"([^"]*)/g);
                 return list.join(', ');
 
-            } else if (['font', 'font-family', 'transition-property'].indexOf(name) >= 0) {
+            } else if (['font', 'transition-property'].indexOf(name) >= 0) {
                 // debugger;
                 const parts = value && value.match(/[^\s"]+|"([^"]*)"/g);
                 return parts.length > 2 || name === 'transition-property' ? parts.join(', ') : parts.join(' ');

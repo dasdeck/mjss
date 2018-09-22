@@ -5,9 +5,8 @@ import Exp from '../src/plugins/Exp';
 
 export default {
     options: (test) => ({plugins: [new Exp(test.opts)]}),
-    tests: [
-        {
-            desc: 'template key name',
+    tests: {
+        'template key name': {
             jss: {
                 '`.class`': {
                     '`color`': 'black'
@@ -15,8 +14,7 @@ export default {
             },
             css: '.class{color:black;}'
         },
-        {
-            desc: 'template name with dynamic value',
+        'template name with dynamic value': {
             jss: {
                 '@env': {
                     'color': 'black'
@@ -27,8 +25,7 @@ export default {
             },
             css: '.class{color:black;}'
         },
-        {
-            desc: 'global mixin',
+        'global mixin': {
             jss: {
                 '@env': {
                     mixin: {
@@ -41,8 +38,7 @@ export default {
             },
             css: '.class{color:black;}'
         },
-        {
-            desc: 'local mixin',
+        'local mixin': {
             jss: {
                 '@env': {
                     mixin: {
@@ -55,8 +51,7 @@ export default {
             },
             css: '.class{color:black;}'
         },
-        {
-            desc: 'conditional (true)',
+        'conditional (true)': {
             jss: {
                 '@env': {
                     var1: 1,
@@ -72,8 +67,7 @@ export default {
             },
             css: '.class{color:black;}'
         },
-        {
-            desc: 'conditional (false)',
+        'conditional (false)': {
             jss: {
                 '@env': {
                     var1: 0,
@@ -90,8 +84,7 @@ export default {
             },
             css: '.class{color:red;}'
         },
-        {
-            desc: 'dynamic values',
+        'dynamic values': {
             jss: {
                 '@env': {
                     var1: '10px',
@@ -102,8 +95,7 @@ export default {
             },
             css: '.class{width:10px;}'
         },
-        {
-            desc: 'mixin with params',
+        'mixin with params': {
             jss: {
                 '@env': {
                     mixin: {
@@ -116,8 +108,7 @@ export default {
             },
             css: '.class{color:red;}'
         },
-        {
-            desc: 'test unique keys',
+        'test unique keys': {
             opts: {forceUniqueKeys: true},
             jss: {
                 '@env': {
@@ -133,8 +124,7 @@ export default {
             },
             css: '.class{color:green;}'
         },
-        {
-            desc: 'test double keys',
+        'test double keys': {
             jss: {
                 '@env': {
                     mixin: {
@@ -148,8 +138,7 @@ export default {
             },
             css: '.class{color:red;color:blue;}'
         },
-        {
-            desc: 'add custom context',
+        'add custom context': {
             opts: {
                 context: {
                     var1: '10px',
@@ -164,8 +153,7 @@ export default {
             },
             css: '.class{width:10px;color:red;}'
         },
-        {
-            desc: 'return mixin from function',
+        'return mixin from function': {
             opts: {
                 env: {
                     var1: '10px',
@@ -180,8 +168,7 @@ export default {
             },
             css: '.class{width:10px;color:red;}'
         },
-        {
-            desc: 'define function in env',
+        'define function in env': {
             jss: {
                 '@env': {
                     myMixin: () => ({color: 'red'}),
@@ -194,8 +181,7 @@ export default {
             },
             css: '.class{width:10px;color:red;}'
         },
-        {
-            desc: 'call function by call',
+        'call function by call': {
             opts: {
                 context: {
                     var1: '10px',
@@ -212,15 +198,13 @@ export default {
             },
             css: '.class{width:10px;color:red;}'
         },
-        {
-            desc: 'change env from external',
+        'change env from external': {
             test(sheet, actions) {
 
                 const exp = sheet.options.plugins[0];
 
                 actions.compare(sheet.toString(), this.css);
-                exp.options.env = exp.options.env || {};
-                exp.options.env['var1'] = '20px';
+                exp.options.env.var1 = '20px';
                 actions.compare(sheet.toString(), this.css2);
                 exp.options.env = {};
                 actions.compare(sheet.toString(), this.css);
@@ -236,6 +220,33 @@ export default {
             },
             css: '.class{width:10px;}',
             css2: '.class{width:20px;}'
+        },
+        'change env from external (cached)': {
+            opts:{cacheEnv: true},
+            test(sheet, actions) {
+
+                const exp = sheet.options.plugins[0];
+
+                actions.compare(sheet.toString(), this.css);
+                exp.options.env = exp.options.env || {};
+                exp.options.env.var1 = '20px';
+
+                actions.compare(sheet.toString(), this.css2);
+                exp.options.env = {};
+
+                actions.compare(sheet.toString(), this.css);
+
+            },
+            jss: {
+                '@env': {
+                    var1: '10px'
+                },
+                '.class': {
+                    'width': "/env('var1')/",
+                }
+            },
+            css: '.class{width:10px;}',
+            css2: '.class{width:20px;}'
         }
-    ]
+    }
 };
