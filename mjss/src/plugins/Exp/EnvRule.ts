@@ -44,13 +44,17 @@ export default class EnvRule extends ContainerRule {
         this.exp.env = this;
         // load rules after setting exp.env member
         this.setRules(data);
+
+        if (this.exp.options.cacheEnv) {
+            this.buildCache();
+        }
     }
 
     render(renderer: ContainerRuleRenderer) {
         return '';
     }
 
-    createCache() {
+    buildCache() {
 
         this.cache = mapValues(this.rules.rules, (rule:Rule) => rule instanceof ContainerRule ? rule : rule.value);
 

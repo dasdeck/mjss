@@ -18,12 +18,6 @@ export default class Exp {
         this.env = new EnvRule(sheet, this, sheet.data['@env']);
     }
 
-    onBeforeRender() {
-        if (this.options.cacheEnv) {
-
-            this.env.createCache();
-        }
-    }
 
 
     createRule(sheet, rules, key, parent) {

@@ -19,7 +19,7 @@ export default class Sheet {
             'onInit',
             'onReady',
             'createRule',
-            'onBeforeRender',
+
             'onProcess',
             'onBeforeOutput'
         ].reduce((res, hookName) => {
@@ -68,7 +68,6 @@ export default class Sheet {
     toString() {
 
         const renderer = new RuleListRenderer(this.rules);
-        this.hook('onBeforeRender', renderer);
         this.rules.render(renderer);
         this.hook('onBeforeOutput', renderer);
         return renderer.toString();
