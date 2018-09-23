@@ -53,7 +53,7 @@ export function spin(color, amount) {
 }
 
 export function tint(color, amount) {
-    return mix(Color({r: 255, g: 255, b: 255}), Color(color), parseFloat(amount));
+    return mix(Color({r: 255, g: 255, b: 255}), Color(color), amount);
 }
 
 export function mix(color, color2, amount = '50%') {

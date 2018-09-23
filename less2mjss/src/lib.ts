@@ -23,13 +23,18 @@ export const staticFunctions = {
     // e: lessFunctions.e
 };
 
+interface Function {
+    name: string;
+}
+
 export const functions = {
     ...customMixinFunctions,
     ...lessFunctions,
-    ...mapKeys(lessFunctions, (func, key) => func.name),
+    ...mapKeys(lessFunctions, (func:Function, key) => func.name),
     ...UnitNumber.operations
 
 };
 
 // provide all functions for execution
 export default functions;
+

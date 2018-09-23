@@ -10,7 +10,7 @@ export default class Exp {
     options: any
     env: EnvRule
 
-    constructor(options = {forceUniqueKeys: false, cacheEnv: false, context: {}, env: {}}) {
+    constructor(options: any = {forceUniqueKeys: false, cacheEnv: false, context: {}, env: {}}) {
         this.options = options;
     }
 

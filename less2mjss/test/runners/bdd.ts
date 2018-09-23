@@ -2,7 +2,7 @@
 import * as suites from '..';
 import {pickBy, isObject, forEach, isString} from 'lodash';
 import less2jss from '../../src/index';
-import {Sheet, Exp, Nest, Extend} from 'mjss';
+import {Sheet, Exp, Nest, Extend, Cleanup} from 'mjss';
 import lessFunctions from '../../src/lessFunctions';
 import {UnitNumber} from 'mjss-css-utils';
 
@@ -13,6 +13,7 @@ import {css_beautify} from 'js-beautify';
 forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, name) => {
 
     const compare = (a, b) => expect(a).toEqual(b);
+
     describe(name, () => {
 
         forEach(block.tests, (row, desc) => {
@@ -36,12 +37,12 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
                 });
             }
 
-            if (lessString) {
+            if (lessString && row.roundtrip !== false) {
 
                 it(`${desc}(round-trip)`, () => {
                     const jss = less2jss(lessString);
                     const env = {...lessFunctions, ...UnitNumber.operations};
-                    const options = {plugins: [new Exp({env}), new Extend, new Nest]}
+                    const options = {plugins: [new Exp({env}), new Extend, new Nest, new Cleanup]}
                     const sheet = new Sheet(options, jss);
                     const jssCss = sheet.toString();
 

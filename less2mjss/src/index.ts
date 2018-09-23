@@ -58,7 +58,7 @@ export function patchAST(rootNode, options) {
 
                 let res;
 
-                if (parent.variable) {
+                if (context.variable) {
                     res = args.join(' ');
                 } else if (context.dynamic) {
 
@@ -94,7 +94,7 @@ export function patchAST(rootNode, options) {
 
             node.render = function(context) {
 
-                const nativeFunction = this.native = nativeFunctions.includes(this.name);
+                const nativeFunction = this.native = ~nativeFunctions.indexOf(this.name);
                 const staticFunction = staticFunctions[this.name];
                 const dynamicFunction = lessFunctions[this.name];
 
@@ -218,7 +218,7 @@ export function patchAST(rootNode, options) {
 
                 } else if (context.dynamic) {
 
-                    return `sub(0, ${value})`;
+                    return `call('sub', 0, ${value})`;
 
                 } else {
 
@@ -529,7 +529,7 @@ export function patchAST(rootNode, options) {
                         }
                     });
 
-                    const escape = (key) => key.includes('-') || true ? `'${key}'` : key;
+                    const escape = (key) => ~key.indexOf('-') || true ? `'${key}'` : key;
 
 
                     const argString = map(params, (val, key) => `${escape(key)}: ${val}`).join(', ');
@@ -737,7 +737,7 @@ export function patchAST(rootNode, options) {
             let res;
             some(node, (val, key) => {
                 if (val && typeof val === 'object') {
-                    return res = val[func] && val[func]() || iterate(val);
+                    return res = val[func] && val[func]() || iterate(val, func);
                 }
             });
             return res;
@@ -770,7 +770,7 @@ export function patchAST(rootNode, options) {
 
         node.hasCustomFunction = function() {
             return this.findChild(node =>
-                node instanceof less.tree.Call && !nativeFunctions.includes(node.name) && !staticFunctions[node.name] ||
+                node instanceof less.tree.Call && !~nativeFunctions.indexOf(node.name) && !staticFunctions[node.name] ||
                 node instanceof less.tree.mixin.Call && customMixinFunctions[node.name]);
         };
 
@@ -782,7 +782,7 @@ export function patchAST(rootNode, options) {
 
 }
 
-export function less2mjss(lessString, options = {skipEmptyRules: true, expandExpressions: false, extractDynamicRules: false}) {
+export function less2mjss(lessString, options:any = {less: {}, skipEmptyRules: false, expandExpressions: false, extractDynamicRules: false}) {
 
     let result;
 

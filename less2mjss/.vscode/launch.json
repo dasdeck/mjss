@@ -7,6 +7,25 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "debug tests",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "args": [
+                "./test/runners/debug.ts"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "lock",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "args": [
+                "./test/utils/lock.ts",
+                "write"
+                ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Jest All",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": ["--runInBand"],
