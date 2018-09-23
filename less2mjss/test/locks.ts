@@ -6,6 +6,8 @@ import {uikit} from './utils/lock';
 import {lockOptions} from './utils/lock';
 import {Sheet} from 'mjss';
 
+import {css_beautify} from 'js-beautify';
+
 
 const jss = JSON.parse(fs.readFileSync(path.join(__dirname, './data/uikit.lock.json'), 'utf8'));
 
@@ -16,8 +18,10 @@ const times:any = {
 times.startTime = performance.now();
 const sheet = new Sheet(lockOptions, jss);
 times.cratedTime = performance.now();
-const css = sheet.toString();
+let css = sheet.toString();
 times.stringTime = performance.now();
+
+css = css_beautify(css);
 
 export default {
     tests: {
