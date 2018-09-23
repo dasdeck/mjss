@@ -1,7 +1,7 @@
 import {nativeFunctions} from 'mjss-css-utils';
 export default class Cleanup {
 
-    onOutput(renderer) {
+    onProcess(renderer) {
 
         const name = renderer.key;
         const value = renderer.value;

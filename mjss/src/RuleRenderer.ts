@@ -24,8 +24,7 @@ export default class RuleRender implements Renderable {
     }
 
     toString() {
-        this.sheet.hook('onOutput', this);
-        return `${String(this.key)}:${String(this.value)};`;
+        return `${this.key}:${String(this.value)};`;
     }
 
 }

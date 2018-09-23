@@ -27,8 +27,7 @@ export default class RuleListRenderer implements Renderable {
 
     toString() {
 
-        this.sheet.hook('onOutput', this);
-        return this.children.map(v => v.toString()).filter(v => v).join('');
+        return <string>this.children.reduce((e, v) => e + v.toString(), '');
 
     }
 }

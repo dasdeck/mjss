@@ -20,7 +20,6 @@ export default class Sheet {
             'onReady',
             'createRule',
             'onBeforeRender',
-            'onOutput',
             'onProcess',
             'onBeforeOutput'
         ].reduce((res, hookName) => {
