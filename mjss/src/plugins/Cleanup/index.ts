@@ -18,18 +18,6 @@ export default class Cleanup {
                     renderer.value = `'${stringValue}'`;
                 }
             }
-        } else if (value && value.includes && !value.includes(', ')) {
-
-            if ('font' === name && value.includes('/')) {
-
-                const list = value.match(/.* \/ .*? (:?[^\s"]+|"([^"]*))|[^\s"]+|"([^"]*)/g);
-                return list.join(', ');
-
-            } else if (['font', 'transition-property'].indexOf(name) >= 0) {
-                // debugger;
-                const parts = value && value.match(/[^\s"]+|"([^"]*)"/g);
-                return parts.length > 2 || name === 'transition-property' ? parts.join(', ') : parts.join(' ');
-            }
         }
 
         return value;

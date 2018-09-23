@@ -25,7 +25,7 @@ export default {
             expression: "mul(var1, 2)",
             result: '20px'
         },
-        'invalid numberss': {
+        'invalid numbers': {
             expression: "mul('foo', 'bar')",
             exception:'foo is not a number'
         }
