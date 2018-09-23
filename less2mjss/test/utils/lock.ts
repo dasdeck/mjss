@@ -27,8 +27,6 @@ if (~process.argv.indexOf('write')) {
 
     const sheet = new Sheet(lockOptions, uikitMjss);
 
-    debugger
-
     fs.writeFileSync(path.join(__dirname, '../data/uikit.lock.json'), JSON.stringify(uikitMjss, null, 2))
     fs.writeFileSync(path.join(__dirname, '../data/uikit.lock.css'), sheet.toString())
 }

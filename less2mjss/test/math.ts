@@ -5,7 +5,7 @@ export default {
             jss: {
                 '@env': {
                     var1: '10px',
-                    var2: '5'
+                    var2: 5
                 },
                 '.class': {
                     width: "/call('mul', env('var1'), env('var2'))/"
@@ -17,7 +17,7 @@ export default {
             jss: {
                 '@env': {
                     var1: '10px',
-                    var2: '5'
+                    var2: 5
                 },
                 '.class': {
                     width: "/call('add', call('mul', env('var1'), env('var2')), env('var2'))/"
@@ -29,7 +29,7 @@ export default {
             jss: {
                 '@env': {
                     var1: '10px',
-                    var2: '5'
+                    var2: 5
                 },
                 '.class': {
                     width: "/call('sub', call('div', env('var1'), env('var2')), env('var2'))/"

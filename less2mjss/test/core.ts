@@ -48,7 +48,7 @@ export default {
             less: '@var1:5;.class{width:rgba(@var1*5,5,5,0.5)}',
             jss: {
                 '@env': {
-                    var1: '5'
+                    var1: 5
                 },
                 '.class': {
                     'width': "/nf('rgba', call('mul', env('var1'), 5), 5, 5, 0.5)/"

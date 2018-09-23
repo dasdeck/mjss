@@ -445,6 +445,11 @@ export function patchAST(rootNode, options) {
 
                         }
 
+                        const asNumber = parseFloat(res);
+                        if (asNumber == res) {
+                            res = asNumber;
+                        }
+                        // debugger
                         context.variables[`${finalName}`] = sContext.pureStatic ? res : wrapExpression(res);
 
                     }
