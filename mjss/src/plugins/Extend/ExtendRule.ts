@@ -23,7 +23,7 @@ class Transformation {
             if (this.rule.value.all) {
                 selectors.forEach(selector => {
                     if (selector.match(this.rule.search)) {
-                        selectors.push({toString:() => selector.replace(this.rule.className, targetSelector)});
+                        selectors.push(selector.replace(this.rule.className, targetSelector));
                     }
                 });
             } else {

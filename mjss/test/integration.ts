@@ -3,10 +3,10 @@ import Exp from '../src/plugins/Exp';
 import Nest from '../src/plugins/Nest';
 
 export default {
-    options: (test) => ({plugins: [
+    options: test => ({plugins: [
         new Exp,
         new Nest,
-        new Extend,
+        new Extend(test.extend),
     ]}),
     tests: {
         'test Extend can handle dynamic rules': {
@@ -56,6 +56,22 @@ export default {
             css: '.targetClass{color:red;}'
         },
         'extend and nested': {
+            jss: {
+                '.target': {
+                    'color': 'black',
+                    '&:hover': {
+                        'color': 'green'
+                    },
+                },
+                '.extender': {
+                    '@extend .target': {all:true},
+                    'color': 'red'
+                }
+            },
+            css: '.target, .extender{color:black;}.target:hover, .extender:hover{color:green;}.extender{color:red;}'
+        },
+        'extend and nested (assumeStaticSelectors)': {
+            extend: {assumeStaticSelectors: true},
             jss: {
                 '.target': {
                     'color': 'black',

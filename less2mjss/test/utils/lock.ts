@@ -15,11 +15,11 @@ export const lockOptions = {
     plugins: [
         new Exp({
             env: functions,
-            // cacheEnv: true
+            cacheEnv: true
         }),
         new Nest,
         new Extend({
-            // assumeStaticSelectors: true
+            assumeStaticSelectors: true
         }),
         new Cleanup
     ]

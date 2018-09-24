@@ -60,7 +60,6 @@ export default class Extend {
 
     onBeforeOutput() {
 
-
         for (const i in this.extends) {
             const extend = this.extends[i];
             extend.apply();
