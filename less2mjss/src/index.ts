@@ -586,7 +586,8 @@ export function patchAST(rootNode, options) {
                         return !pureNative ? `\${env('${name}')}` : `var(--${name})`;
                     });
 
-                    return pureNative ? value : `\`${value}\``;
+                    const quote = node.escaped ? '' : node.quote;
+                    return pureNative ? value : `\`${quote}${value}${quote}\``;
 
                 } else {
                     value = node.value;

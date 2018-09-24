@@ -2,12 +2,13 @@
 import * as suites from '..';
 import {pickBy, isObject, forEach, isString} from 'lodash';
 import less2jss from '../../src/index';
-import {Sheet, Exp, Nest, Extend, Cleanup} from 'mjss';
+import {Sheet, Exp, Nest, Extend} from 'mjss';
 import lessFunctions from '../../src/lessFunctions';
 import {UnitNumber} from 'mjss-css-utils';
 
 import * as less from 'less';
 import {css_beautify} from 'js-beautify';
+
 /* generates test with bdd style commands */
 
 forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, name) => {
@@ -22,27 +23,35 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
 
             desc = row.desc || desc || row.less;
 
+            const testCall = row.focus ? it.only : it;
+
             if (row.test) {
 
-                it(desc, () => {
+                testCall(desc, () => {
                     row.test(less2jss, {compare})
                 });
+
             }
 
             else if (row.jss) {
 
-                it(desc, () => {
+                testCall(desc, () => {
                     const jss = less2jss(lessString);
                     compare(jss, row.jss)
                 });
+
             }
 
             if (lessString && row.roundtrip !== false) {
 
-                it(`${desc}(round-trip)`, () => {
+                testCall(`${desc}(round-trip)`, () => {
                     const jss = less2jss(lessString);
                     const env = {...lessFunctions, ...UnitNumber.operations};
-                    const options = {plugins: [new Exp({env}), new Extend, new Nest, new Cleanup]}
+                    const options = {plugins: [
+                        new Exp({env}),
+                        new Extend,
+                        new Nest
+                    ]}
                     const sheet = new Sheet(options, jss);
                     const jssCss = sheet.toString();
 
@@ -52,6 +61,7 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
 
                     })
                 })
+
             }
 
         });

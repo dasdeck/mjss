@@ -5,9 +5,7 @@ export default class Nest {
 
     onProcess(renderer:ContainerRuleRenderer) {
 
-
         if (renderer.rule.rules) {
-
 
             while (renderer.parent && !isContainer(renderer.parent)) {
 
@@ -25,7 +23,7 @@ export default class Nest {
                 renderer = renderer.parent.children.pop();
                 // TODO remove interdependency to Extend (expose callback?)
                 if(renderer.parent.rule._extend) {
-                    renderer.rule._extend = renderer.parent.rule._extend;
+                    (<any>renderer.rule)._extend = renderer.parent.rule._extend;
                 }
                 renderer.parent = renderer.parent.parent;
 
@@ -33,6 +31,7 @@ export default class Nest {
 
             }
         }
+
     }
 };
 

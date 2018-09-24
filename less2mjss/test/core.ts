@@ -73,6 +73,29 @@ export default {
                     'font-family': "/env('fam1')/"
                 }
             }
+        },
+        'handle content': {
+            less: "@var1:10px;.class1{content:'@{var1}'}",
+            jss: {
+                '@env': {
+                    var1: '10px'
+                },
+                '.class1': {
+                    'content': "`'${env('var1')}'`"
+                }
+            }
+        },
+        'handle escaped content': {
+            // focus: true,
+            less: "@var1:10px;.class1{top:~'calc(@{var1} + 2)'}",
+            jss: {
+                '@env': {
+                    var1: '10px'
+                },
+                '.class1': {
+                    'top': "`calc(${env('var1')} + 2)`"
+                }
+            }
         }
 
     }

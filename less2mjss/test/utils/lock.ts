@@ -1,7 +1,7 @@
 import {concatLessSource} from '.'
 import {less2mjss} from '../../src';
 import functions from '../../src/lib';
-import {Sheet, Exp, Extend, Cleanup, Nest} from 'mjss';
+import {Sheet, Exp, Extend, Nest} from 'mjss';
 import {css_beautify} from 'js-beautify';
 
 import * as path from 'path';
@@ -20,8 +20,7 @@ export const lockOptions = {
         new Nest,
         new Extend({
             assumeStaticSelectors: true
-        }),
-        new Cleanup
+        })
     ]
 };
 

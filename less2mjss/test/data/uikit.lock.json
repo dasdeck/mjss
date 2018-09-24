@@ -230,16 +230,16 @@
     "display": "none"
   },
   ".var-media-s::before": {
-    "content": "`${env('breakpoint-small')}`"
+    "content": "`'${env('breakpoint-small')}'`"
   },
   ".var-media-m::before": {
-    "content": "`${env('breakpoint-medium')}`"
+    "content": "`'${env('breakpoint-medium')}'`"
   },
   ".var-media-l::before": {
-    "content": "`${env('breakpoint-large')}`"
+    "content": "`'${env('breakpoint-large')}'`"
   },
   ".var-media-xl::before": {
-    "content": "`${env('breakpoint-xlarge')}`"
+    "content": "`'${env('breakpoint-xlarge')}'`"
   },
   "/call('hook-base-misc')/": {},
   "a.uk-link-muted, .uk-link-muted a": {
@@ -6979,9 +6979,9 @@
     "inverse-global-border": "/call('fade', env('global-inverse-color'), '20%')/",
     "svg-fill": {
       "`${env('escape-color-default')}`": "/call('escape', env('color-default'))/",
-      "`${env('escape-color-new')}`": "/call('escape', `${env('color-new')}`)/",
-      "`${env('data-uri')}`": "/call('data-uri', 'image/svg+xml;charset=UTF-8', `${env('src')}`)/",
-      "`${env('replace-src')}`": "/call('replace', `${env('data-uri')}`, `${env('escape-color-default')}`, `${env('escape-color-new')}`, \"g\")/",
+      "`${env('escape-color-new')}`": "/call('escape', `\"${env('color-new')}\"`)/",
+      "`${env('data-uri')}`": "/call('data-uri', 'image/svg+xml;charset=UTF-8', `\"${env('src')}\"`)/",
+      "`${env('replace-src')}`": "/call('replace', `\"${env('data-uri')}\"`, `\"${env('escape-color-default')}\"`, `\"${env('escape-color-new')}\"`, \"g\")/",
       "`${env('property')}`": "/call('e', env('replace-src'))/"
     },
     "hook-base-body": {},
