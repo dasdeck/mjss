@@ -17,7 +17,14 @@ export const lockOptions = {
             env: functions,
             cacheEnv: true
         }),
-        new Nest,
+        new Nest({
+            onNest(renderer) {
+                // TODO remove interdependency to Extend (expose callback?)
+                if(renderer.parent.rule._extend) {
+                    renderer.rule._extend = renderer.parent.rule._extend;
+                }
+            }
+        }),
         new Extend({
             assumeStaticSelectors: true
         })

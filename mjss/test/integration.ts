@@ -5,7 +5,7 @@ import Nest from '../src/plugins/Nest';
 export default {
     options: test => ({plugins: [
         new Exp,
-        new Nest,
+        new Nest(test.nest),
         new Extend(test.extend),
     ]}),
     tests: {
@@ -72,6 +72,14 @@ export default {
         },
         'extend and nested (assumeStaticSelectors)': {
             extend: {assumeStaticSelectors: true},
+            nest: {
+                onNest(renderer) {
+                    // TODO remove interdependency to Extend (expose callback?)
+                    if(renderer.parent.rule._extend) {
+                        renderer.rule._extend = renderer.parent.rule._extend;
+                    }
+                }
+            },
             jss: {
                 '.target': {
                     'color': 'black',

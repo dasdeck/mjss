@@ -3,6 +3,12 @@ import { isContainer, reExplicitNest } from "./lib";
 
 export default class Nest {
 
+    options:any;
+
+    constructor(options:any = {}) {
+        this.options = options;
+    }
+
     onProcess(renderer:ContainerRuleRenderer) {
 
         if (renderer.rule.rules) {
@@ -21,10 +27,11 @@ export default class Nest {
 
                 renderer.key = newKey;
                 renderer = renderer.parent.children.pop();
-                // TODO remove interdependency to Extend (expose callback?)
-                if(renderer.parent.rule._extend) {
-                    (<any>renderer.rule)._extend = renderer.parent.rule._extend;
+
+                if (this.options.onNest) {
+                    this.options.onNest(renderer)
                 }
+
                 renderer.parent = renderer.parent.parent;
 
                 renderer.parent.children.push(renderer);
