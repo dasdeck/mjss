@@ -13,7 +13,7 @@ export default class Extend {
 
     extends: any = {}
     options: any
-
+    renderers: any = {}
 
     constructor(options: any = {}) {
         this.options = options;

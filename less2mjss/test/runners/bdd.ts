@@ -1,13 +1,11 @@
 
 import * as suites from '..';
 import {pickBy, isObject, forEach, isString} from 'lodash';
-import less2jss from '../../src/index';
 import {Sheet, Exp, Nest, Extend} from 'mjss';
-import lessFunctions from '../../src/lessFunctions';
-import {UnitNumber} from 'mjss-css-utils';
 
 import * as less from 'less';
 import {css_beautify} from 'js-beautify';
+import { less2mjss, functions } from 'less2mjss';
 
 /* generates test with bdd style commands */
 
@@ -25,43 +23,58 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
 
             const testCall = row.focus ? it.only : it;
 
+            const env = functions;
+            const options = {plugins: [
+                new Exp({env}),
+                new Nest,
+                new Extend,
+            ]};
+
             if (row.test) {
 
                 testCall(desc, () => {
-                    row.test(less2jss, {compare})
+                    row.test(less2mjss, {compare})
                 });
 
             }
 
-            else if (row.jss) {
+            let lessCss;
+            let jss = row.jss;
+            let jssCss;
+
+            if (lessString) {
+                jss = less2mjss(lessString);
+                less.render(lessString, (err, res) => {
+                    lessCss = css_beautify(res.css);
+                });
+            }
+
+            const sheet = new Sheet(options, jss);
+
+            jssCss = css_beautify(sheet.toString());
+
+            if (row.jss && row.less) {
 
                 testCall(desc, () => {
-                    const jss = less2jss(lessString);
                     compare(jss, row.jss)
                 });
 
+            } else if (row.css && row.jss) {
+                testCall(desc, () => {
+                    compare(jssCss, row.css)
+                });
             }
 
-            if (lessString && row.roundtrip !== false) {
-
+            if (lessCss && jssCss && row.roundtrip !== false) {
                 testCall(`${desc}(round-trip)`, () => {
-                    const jss = less2jss(lessString);
-                    const env = {...lessFunctions, ...UnitNumber.operations};
-                    const options = {plugins: [
-                        new Exp({env}),
-                        new Extend,
-                        new Nest
-                    ]}
-                    const sheet = new Sheet(options, jss);
-                    const jssCss = sheet.toString();
-
-                    less.render(lessString, (err, res) => {
-
-                        compare(css_beautify(jssCss), css_beautify(res.css));
-
-                    })
+                    compare(jssCss, lessCss);
                 })
+            }
 
+            if (lessCss && row.css) {
+                testCall(`${desc}(expected css)`, () => {
+                    compare(css_beautify(row.css), lessCss);
+                });
             }
 
         });

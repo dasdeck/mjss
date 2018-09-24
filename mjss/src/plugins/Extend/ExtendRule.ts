@@ -90,7 +90,19 @@ export default class ExtendRule extends Rule {
     }
 
     addTransform(renderer) {
-        this.transformations.push(new Transformation(this, renderer));
+
+        if (!renderer.id) {
+            renderer.id = id++;
+        }
+
+        this.extend.renderers[renderer.id] = renderer;
+
+        const trans = new Transformation(this, renderer);
+        renderer.transformations = renderer.transformations || [];
+        renderer.transformations.push(trans);
+
+        this.transformations.push(trans);
+
     }
 
     collect(renderer) {
