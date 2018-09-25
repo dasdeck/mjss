@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/Cellar/yarn/1.9.4/libexec/bin/yarn.js link
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.9.4/libexec/bin/yarn.js
 
 PATH: 
   /opt/local/bin:/opt/local/sbin:/Applications/MAMP/bin/php/php7.1.6/bin:/Applications/MAMP/library/bin:/Applications/MAMP/bin/php/php7.1.6:/Applications/MAMP/library/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/opt/local/bin:/opt/local/sbin:/Applications/MAMP/bin/php/php7.1.6/bin:/Applications/MAMP/library/bin:/Applications/MAMP/bin/php/php7.1.6
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  SyntaxError: /Users/jms/mjss/package.json: Unexpected token } in JSON at position 308
+  SyntaxError: /Users/jms/mjss/mjss/package.json: Unexpected token } in JSON at position 284
       at JSON.parse (<anonymous>)
       at /usr/local/Cellar/yarn/1.9.4/libexec/lib/cli.js:1130:59
       at Generator.next (<anonymous>)
@@ -29,8 +29,9 @@ npm manifest:
   	],
   	"scripts": {
   		"test": "jest",
-  		"watch": "concurrently --kill-others 'yarn test --watchAll' 'yarn --cwd mjss build --watch' 'yarn --cwd less2mjss build --watch' 'yarn --cwd css-utils build --watch'",
-  		"link": "yarn --cwd mjss link && yarn --cwd less2mjss",
+  		"watch": "concurrently --kill-others 'yarn test --watchAll' 'yarn --cwd mjss build --watch' 'yarn --cwd less2mjss watch' 'yarn --cwd css-utils build --watch'",
+  		"link-all": "yarn --cwd mjss link && yarn --cwd less2mjss link && yarn --cwd css-utils link",
+  		"coverage": "jest --coverage"
   	},
   	"jest": {
   		"transform": {
@@ -43,7 +44,11 @@ npm manifest:
   		"moduleFileExtensions": [
   			"ts",
   			"js"
-  		]
+  		],
+  		 "coverageReporters": ["json", "html"],
+  		 "collectCoverageFrom":[
+  			 "*/src/**"
+  		 ]
   	},
   	"devDependencies": {
   		"concurrently": "^4.0.1",
@@ -73,22 +78,6 @@ Lockfile:
       esutils "^2.0.2"
       js-tokens "^4.0.0"
   
-  "@types/color-convert@*":
-    version "1.9.0"
-    resolved "https://registry.yarnpkg.com/@types/color-convert/-/color-convert-1.9.0.tgz#bfa8203e41e7c65471e9841d7e306a7cd8b5172d"
-    dependencies:
-      "@types/color-name" "*"
-  
-  "@types/color-name@*":
-    version "1.1.0"
-    resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.0.tgz#926f76f7e66f49cc59ad880bb15b030abbf0b66d"
-  
-  "@types/color@^3.0.0":
-    version "3.0.0"
-    resolved "https://registry.yarnpkg.com/@types/color/-/color-3.0.0.tgz#40f8a6bf2fd86e969876b339a837d8ff1b0a6e30"
-    dependencies:
-      "@types/color-convert" "*"
-  
   "@types/commander@^2.11.0":
     version "2.12.2"
     resolved "https://registry.yarnpkg.com/@types/commander/-/commander-2.12.2.tgz#183041a23842d4281478fa5d23c5ca78e6fd08ae"
@@ -102,6 +91,10 @@ Lockfile:
   "@types/lodash@^4.14.116":
     version "4.14.116"
     resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
+  
+  "@types/node@^10.10.3":
+    version "10.10.3"
+    resolved "https://registry.yarnpkg.com/@types/node/-/node-10.10.3.tgz#09c75a4ad84d6a3d286790bdd9489a4f8ee9906c"
   
   "@types/semver@^5.4.0":
     version "5.5.0"
@@ -700,29 +693,15 @@ Lockfile:
       map-visit "^1.0.0"
       object-visit "^1.0.0"
   
-  color-convert@^1.9.0, color-convert@^1.9.1:
+  color-convert@^1.9.0:
     version "1.9.3"
     resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
     dependencies:
       color-name "1.1.3"
   
-  color-name@1.1.3, color-name@^1.0.0:
+  color-name@1.1.3:
     version "1.1.3"
     resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.3.tgz#a7d0558bd89c42f795dd42328f740831ca53bc25"
-  
-  color-string@^1.5.2:
-    version "1.5.3"
-    resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.3.tgz#c9bbc5f01b58b5492f3d6857459cb6590ce204cc"
-    dependencies:
-      color-name "^1.0.0"
-      simple-swizzle "^0.2.2"
-  
-  color@^3.0.0:
-    version "3.0.0"
-    resolved "https://registry.yarnpkg.com/color/-/color-3.0.0.tgz#d920b4328d534a3ac8295d68f7bd4ba6c427be9a"
-    dependencies:
-      color-convert "^1.9.1"
-      color-string "^1.5.2"
   
   combined-stream@1.0.6:
     version "1.0.6"
@@ -1721,10 +1700,6 @@ Lockfile:
   is-arrayish@^0.2.1:
     version "0.2.1"
     resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
-  
-  is-arrayish@^0.3.1:
-    version "0.3.2"
-    resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.3.2.tgz#4574a2ae56f7ab206896fb431eaeed066fdf8f03"
   
   is-binary-path@^1.0.0:
     version "1.0.1"
@@ -3477,12 +3452,6 @@ Lockfile:
     version "3.0.2"
     resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   
-  simple-swizzle@^0.2.2:
-    version "0.2.2"
-    resolved "https://registry.yarnpkg.com/simple-swizzle/-/simple-swizzle-0.2.2.tgz#a4da6b635ffcccca33f70d17cb92592de95e557a"
-    dependencies:
-      is-arrayish "^0.3.1"
-  
   sisteransi@^0.1.1:
     version "0.1.1"
     resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-0.1.1.tgz#5431447d5f7d1675aac667ccd0b865a4994cb3ce"
@@ -3764,6 +3733,10 @@ Lockfile:
     version "2.3.8"
     resolved "http://registry.npmjs.org/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   
+  tinycolor2@^1.4.1:
+    version "1.4.1"
+    resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
+  
   tmp@^0.0.33:
     version "0.0.33"
     resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -3895,6 +3868,10 @@ Lockfile:
     dependencies:
       commander "~2.17.1"
       source-map "~0.6.1"
+  
+  uikit@3.0.0-rc.16:
+    version "3.0.0-rc.16"
+    resolved "https://registry.yarnpkg.com/uikit/-/uikit-3.0.0-rc.16.tgz#b003992acd3aa9c790eaf8577ff9aacf200877b9"
   
   union-value@^1.0.0:
     version "1.0.0"
