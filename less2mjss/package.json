@@ -2,20 +2,26 @@
 	"name": "less2mjss",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "dist/es5",
 	"module": "dist/es6",
 	"scripts": {
 		"test": "jest --watchAll",
 		"lint": "eslint */*.ts",
-		"build": "tsc -p tsconfig.es6.json",
+		"watch": "concurrently 'yarn build:es6 --watch'",
+		"build": "yarn build:es6",
+		"build:es5": "tsc -p tsconfig.es5.json",
+		"build:es6": "tsc -p tsconfig.es6.json",
 		"lock": "ts-node ./test/util/lock.ts"
 	},
 	"author": "",
 	"license": "MIT",
+	"dependencies": {
+	},
 	"devDependencies": {
 		"@types/jest": "^23.3.2",
 		"@types/lodash": "^4.14.116",
 		"@types/node": "^10.10.3",
+		"concurrently": "^4.0.1",
 		"eslint": "^5.6.0",
 		"eslint-plugin-typescript": "^0.12.0",
 		"jest": "^23.6.0",

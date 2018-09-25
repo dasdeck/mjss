@@ -1,0 +1,18 @@
+{
+	"name": "less2mjss-cli",
+	"version": "1.0.0",
+	"description": "cli wrapper for less2mjss",
+	"bin": {
+		"less2mjss": "./cli"
+	},
+	"scripts": {
+		"install-local": "ln -s $(pwd)/cli /usr/local/bin/less2mjss",
+		"install-local-force": "ln -sf $(pwd)/cli /usr/local/bin/less2mjss"
+	},
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"ts-node": "^7.0.1",
+		"less2mjss": "^1.0.0"
+	}
+}
