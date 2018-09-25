@@ -10,9 +10,6 @@
 			"path": "less2mjss"
 		},
 		{
-			"path": "sjss"
-		},
-		{
 			"name": ".",
 			"path": "."
 		}
