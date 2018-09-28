@@ -17,7 +17,8 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
 
         forEach(block.tests, (row, desc) => {
 
-            const lessString = isString(row) ? row : row.less;
+            const lessOnly = isString(row);
+            const lessString = lessOnly ? row : row.less;
 
             desc = row.desc || desc || row.less;
 
@@ -66,9 +67,9 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
             }
 
             if (lessCss && jssCss && row.roundtrip !== false) {
-                testCall(`${desc}(round-trip)`, () => {
+                testCall(`${desc}(round-trip)${lessOnly ? lessCss.split('\n').join('') : ''}`, () => {
                     compare(jssCss, lessCss);
-                })
+                });
             }
 
             if (lessCss && row.css) {

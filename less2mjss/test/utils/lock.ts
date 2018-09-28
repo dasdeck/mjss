@@ -11,7 +11,7 @@ const uikitSourceDir = path.resolve(path.join(require.resolve('uikit'), '/../../
 
 export const uikit = concatLessSource(uikitSourceDir);
 
-export const lockOptions = {
+export const lockOptions = () => ({
     plugins: [
         new Exp({
             env: functions,
@@ -29,7 +29,7 @@ export const lockOptions = {
             assumeStaticSelectors: true
         })
     ]
-};
+});
 
 
 if (~process.argv.indexOf('write')) {
@@ -37,7 +37,7 @@ if (~process.argv.indexOf('write')) {
 
     const uikitMjss = less2mjss(uikit);
 
-    const sheet = new Sheet(lockOptions, uikitMjss);
+    const sheet = new Sheet(lockOptions(), uikitMjss);
 
     fs.writeFileSync(path.join(__dirname, '../data/uikit.lock.json'), JSON.stringify(uikitMjss, null, 2))
     let css = sheet.toString();

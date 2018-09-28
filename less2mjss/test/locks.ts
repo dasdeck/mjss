@@ -17,7 +17,7 @@ const times:any = {
 }
 
 times.startTime = performance.now();
-const sheet = new Sheet(lockOptions, jss);
+const sheet = new Sheet(lockOptions(), jss);
 times.cratedTime = performance.now();
 sheet.toString();
 times.stringTime = performance.now();

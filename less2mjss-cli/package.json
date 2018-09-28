@@ -12,7 +12,12 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"ts-node": "^7.0.1",
-		"less2mjss": "^1.0.0"
+		"diff": "^3.5.0",
+		"diff2html": "^2.4.0",
+		"glob": "^7.1.3",
+		"js-beautify": "^1.8.6",
+		"less2mjss": "^1.0.0",
+		"mkpath": "^1.0.0",
+		"ts-node": "^7.0.1"
 	}
 }

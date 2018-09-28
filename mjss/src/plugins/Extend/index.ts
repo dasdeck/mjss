@@ -27,14 +27,17 @@ export default class Extend {
                 extend.mark(rule);
             }
         }
+
     }
 
     createRule(sheet, rules, key, list) {
+
         if (startsWith(key, patternExtend)) {
             const rule = new ExtendRule(sheet, rules, key, list.rule, this);
             this.extends[rule.id] = rule;
             return rule;
         }
+
     }
 
     onProcess(renderer) {

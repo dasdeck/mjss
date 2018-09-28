@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test diff",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "args": [
+                "${workspaceFolder}/src/cli.ts",
+                "./test/*.less",
+                "diff"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test diff uikit",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "cwd": "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes",
+            "args": [
+                "${workspaceFolder}/src/cli.ts",
+                "master-*/{_import.less,styles/*.less}",
+                "diff",
+                "cache",
+                "template",
+                "@import \"/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit/src/less/uikit.less\";\n@import \"/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes/master/_import.less\";\n@import \"$FILE\";",
+                "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes/master-lilian/_import.less",
+                "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes/master-lilian/styles/white-green.less",
+            ]
+        }
+    ]
+}
