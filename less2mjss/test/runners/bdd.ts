@@ -1,12 +1,12 @@
 
 import * as suites from '..';
 import {pickBy, isObject, forEach, isString} from 'lodash';
-import {Sheet, Exp, Nest, Extend} from 'mjss';
 
 import * as less from 'less';
 import {css_beautify} from 'js-beautify';
-import { less2mjss, functions } from 'less2mjss';
+import { less2mjss } from 'less2mjss';
 
+import {createSheet} from '../utils';
 /* generates test with bdd style commands */
 
 forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, name) => {
@@ -23,13 +23,6 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
             desc = row.desc || desc || row.less;
 
             const testCall = row.focus ? it.only : it;
-
-            const env = functions;
-            const options = {plugins: [
-                new Exp({env}),
-                new Nest,
-                new Extend,
-            ]};
 
             if (row.test) {
 
@@ -50,7 +43,7 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
                 });
             }
 
-            const sheet = new Sheet(options, jss);
+            const sheet = createSheet(jss);
 
             jssCss = css_beautify(sheet.toString());
 

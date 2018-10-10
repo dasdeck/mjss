@@ -96,6 +96,47 @@ export default {
                     'top': "`calc(${env('var1')} + 2)`"
                 }
             }
+        },
+        'two media in mixin': {
+            less: ".hook1(){ @media (min-width: 100px) { .class1{color:red}} @media (min-width: 100px) { .class2{width:100px;}} }",
+            jss: {
+                '@env': {
+                    hook1: {
+                        '@media (min-width: 100px)': {
+                            '.class1': {
+                                color: 'red'
+                            }
+                        },
+                        '@media (min-width: 100px) /* id:1 */': {
+                            '.class2': {
+                                width: '100px'
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'text-shadow': {
+            less: '@val: -2px -2px 0 darken(red, 10%), 2px 2px 0 rgba(208, 33, 68, 0.3); .class1{text-shadow: @val;}',
+            jss: {
+                '@env': {
+                    val: "`${`${'-2px'} ${'-2px'} ${0} ${call('darken', 'red', '10%')}`}, ${`${'2px'} ${'2px'} ${0} ${nf('rgba', 208, 33, 68, 0.3)}`}`"
+                },
+                '.class1': {
+                    'text-shadow': "/env('val')/"
+                }
+            }
+        },
+        'url': {
+            less: '@val: "test"; .class1{background-image: url("@{val}");}',
+            jss: {
+                '@env': {
+                    val: "\"test\""
+                },
+                '.class1': {
+                    'background-image': "/nf('url', `${env('val')}`)/"
+                }
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 export default [
     'calc',
+    'cubic-bezier',
     'linear-gradient',
     'rgba',
     'url',
@@ -12,5 +13,5 @@ export default [
     'scale',
     'translate3d',
     'translateZ',
-    'scale3d'
+    'scale3d',
 ];

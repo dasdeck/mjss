@@ -38,7 +38,7 @@ files.forEach(file => {
 
     const cachePath = path.join(cacheDir, file.replace(process.cwd(), '').replace(/\//g, '_').replace('.less', ''));
     const settingsFile = path.join(cachePath, '_settings.json');
-    if (useCache || !fs.existsSync(cachePath) || !fs.existsSync(settingsFile) || fs.readFileSync(settingsFile, 'utf8') !== settings) {
+    if (!useCache || !fs.existsSync(cachePath) || !fs.existsSync(settingsFile) || fs.readFileSync(settingsFile, 'utf8') !== settings) {
 
         mkpath.sync(cachePath);
 
@@ -59,9 +59,10 @@ files.forEach(file => {
 
             });
 
+            fs.writeFileSync(path.join(cachePath, 'source.less'), source);
             fs.writeFileSync(path.join(cachePath, 'mjss.css'), css.mjss);
             fs.writeFileSync(path.join(cachePath, 'less.css'), css.less);
-            fs.writeFileSync(path.join(cachePath, 'mjss.json'), JSON.stringify(mjss));
+            fs.writeFileSync(path.join(cachePath, 'mjss.json'), JSON.stringify(mjss, null, 2));
 
             fs.writeFileSync(settingsFile, settings);
 
@@ -121,13 +122,13 @@ function diffPage(diff) {
 
     <script>
     ${diff2HtmlJs}
-    ${colorTableHtml}
     </script>
 
     </head>
 
     <body>
         ${body}
+        ${colorTableHtml}
     </body>
 
     </html>`;
@@ -136,15 +137,15 @@ function diffPage(diff) {
 
 function colorTable(colors) {
 
-const tableContent = colors.map(color => {
-    return `<tr>
-    <td style="background-color:${color.less};">less</td>
-    <td style="background-color:${color.mjss};">mjss</td>
-    </tr>`
-}).join('\n');
+    const tableContent = colors.map(color => {
+        return `<tr>
+        <td style="background-color:${color.less};">less</td>
+        <td style="background-color:${color.mjss};">mjss</td>
+        </tr>`
+    }).join('\n');
 
-return colors.length && `
-<table style="width:100%">
-${tableContent}
-</table>`;
+    return colors.length && `
+    <table style="width:100%">
+    ${tableContent}
+    </table>`;
 }

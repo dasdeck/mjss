@@ -4,7 +4,26 @@ import {isArray, mapKeys, forEach, some, size, merge, map, assign} from 'lodash'
 import lessFunctions from './lessFunctions';
 import {staticFunctions, customMixinFunctions, operatorMap} from './lib';
 import {nativeFunctions} from 'mjss-css-utils';
+import { isObject } from 'util';
 
+
+function iteratedMerge(a, b) {
+
+    for (const key in b) {
+        if (key in a) {
+            if (~key.indexOf('@media')) {
+                debugger
+            }
+        }
+
+        if (isObject(a[key]) && isObject(b[key])) {
+            iteratedMerge(a[key], b[key]);
+        } else {
+            a[key] = b[key];
+        }
+    }
+
+}
 
 export function patchAST(rootNode, options) {
 
@@ -20,7 +39,7 @@ export function patchAST(rootNode, options) {
         return exp[0] === '`' && exp[exp.length - 1] === '`' ? exp : `\`${exp}\``;
     }
 
-    function concatArgs(args, node, context) {
+    function concatArgs(args, node, context, joinWith = ' ') {
 
         const dynamic = context.dynamic || node.hasVars();
 
@@ -35,7 +54,7 @@ export function patchAST(rootNode, options) {
             } else {
                 return arg.render(sContext);
             }
-        }).join(' ');
+        }).join(joinWith);
 
         return !dynamic || args.length === 1 ? res : `\`${res}\``;
 
@@ -62,7 +81,7 @@ export function patchAST(rootNode, options) {
                     res = args.join(' ');
                 } else if (context.dynamic) {
 
-                    res = concatArgs(node.value, node, sContext);
+                    res = concatArgs(node.value, node, sContext, ', ');
 
                 } else {
                     res = args.join(', ');
@@ -106,6 +125,7 @@ export function patchAST(rootNode, options) {
 
                     if (context.dynamic) {
 
+                        // sContext.calc = this.name === 'calc'
                         return `nf('${this.name}', ${this.args.map(v => {
                             const res = `${v.render(sContext)}`;
                             return res;
@@ -269,36 +289,31 @@ export function patchAST(rootNode, options) {
                 const originalRules = node.rules.reduce((prev, cur) => {
                     if (cur.render) {
 
-                        if (node.root) { // use double instances
+                        const newEl = cur.render(sContext);
+                        if (size(newEl)) {
 
-                            const newEl = cur.render(sContext);
-                            if (size(newEl)) {
+                            const name = Object.keys(newEl)[0];
+                            const el = newEl[name];
+                            const targetName = name;// + `#${context.component || 'global'}#`;
 
-                                const name = Object.keys(newEl)[0];
-                                const el = newEl[name];
-                                const targetName = name;// + `#${context.component || 'global'}#`;
+                            if (prev[targetName]) {
 
-                                if (prev[targetName]) {
+                                if (el.pure) {
 
-                                    if (el.pure) {
+                                    iteratedMerge(prev, newEl);
 
-                                        merge(prev, newEl);
-
-                                    } else {
-                                        const quote = name[0] === '`' ? '`' : '';
-                                        const cleanName = quote ? name.substr(1, name.length - 2) : name;
-                                        const newName = `${quote}${cleanName} /* id:${instanceId++} */${quote}`;
-
-                                        prev[newName] = el;
-
-                                    }
                                 } else {
-                                    prev[targetName] = el;
-                                }
+                                    const quote = name[0] === '`' ? '`' : '';
+                                    const cleanName = quote ? name.substr(1, name.length - 2) : name;
+                                    const newName = `${quote}${cleanName} /* id:${instanceId++} */${quote}`;
 
+                                    prev[newName] = el;
+
+                                }
+                            } else {
+                                prev[targetName] = el;
                             }
-                        } else {
-                            prev = {...prev, ...cur.render(sContext)};
+
                         }
                     }
                     return prev;
@@ -336,7 +351,7 @@ export function patchAST(rootNode, options) {
                     // }
                     if (pure) {
                         context.pureMixins[name.substr(1)] = context.pureMixins[name.substr(1)] || {};
-                        merge(context.pureMixins[name.substr(1)], finalRules);
+                        iteratedMerge(context.pureMixins[name.substr(1)], finalRules);
                     } else {
                         result = {
                             [name]: finalRules
@@ -449,8 +464,9 @@ export function patchAST(rootNode, options) {
                         if (asNumber == res) {
                             res = asNumber;
                         }
-                        // debugger
-                        context.variables[`${finalName}`] = sContext.pureStatic ? res : wrapExpression(res);
+                        const finalValue = sContext.pureStatic ? res : wrapExpression(res);
+
+                        context.variables[`${finalName}`] = finalValue;
 
                     }
 
@@ -520,7 +536,7 @@ export function patchAST(rootNode, options) {
 
                 const def = context.mixinsRaw[`.${name}`];
                 const params = {};
-                // debugger
+
                 if (def && def.params.length) {
 
                     sContext.dynamic = true;
@@ -586,7 +602,8 @@ export function patchAST(rootNode, options) {
                         return !pureNative ? `\${env('${name}')}` : `var(--${name})`;
                     });
 
-                    const quote = node.escaped ? '' : node.quote;
+                    let quote = node.escaped || context.noQuotes ? '' : node.quote;
+
                     return pureNative ? value : `\`${quote}${value}${quote}\``;
 
                 } else {
@@ -600,7 +617,6 @@ export function patchAST(rootNode, options) {
                 if (node.escaped) {
                     return value;
                 } else {
-
                     return `${node.quote}${value}${node.quote}`;
                 }
 
@@ -609,8 +625,11 @@ export function patchAST(rootNode, options) {
         } else if (node instanceof less.tree.URL) {
 
             node.render = function(context) {
-                const sContext = {...context, parent: this};
-                return context.pureStatic ? `url(${node.value.render(sContext)})` : `nf('url', ${node.value.render(sContext)})`;
+                const sContext = {...context, parent: this, noQuotes: true }
+
+                const val = node.value.render(sContext);
+
+                return context.pureStatic ? `url(${node.value.render(sContext)})` : `nf('url', ${val})`;
             };
 
         } else if (node instanceof less.tree.Import) {

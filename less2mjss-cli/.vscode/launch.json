@@ -18,7 +18,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "test diff uikit",
+            "name": "test diff themes",
             "program": "${workspaceFolder}/node_modules/.bin/ts-node",
             "cwd": "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes",
             "args": [
