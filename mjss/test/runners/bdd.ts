@@ -5,7 +5,7 @@ import Sheet from '../../src/Sheet';
 
 /* generates test with bdd style commands */
 
-forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, name) => {
+forEach(pickBy(suites, suite => isObject(suite) && (suite as any).tests), (block:any, name) => {
 
     const compare = (a, b) => expect(a).toBe(b);
     describe(name, () => {

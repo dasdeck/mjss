@@ -1,6 +1,20 @@
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
-import { isContainer, reExplicitNest } from "./lib";
+import { isContainer, reExplicitNest, isBubbling } from "./lib";
+import RuleRender from "../../RuleRenderer";
 
+
+function combineKeys(pkey, cKey) {
+    const pKeys = pkey.split(', ');
+    const sKeys = cKey.split(', ');
+    const newKey = sKeys.map(sKey => {
+        return pKeys.map(pKey =>  {
+            const replaced = sKey.replace(reExplicitNest, pKey);
+            return replaced !== sKey ? replaced : `${pKey} ${sKey}`;
+        }).join(', ')
+    }).join(', ');
+
+    return newKey;
+}
 export default class Nest {
 
     options:any;
@@ -11,21 +25,22 @@ export default class Nest {
 
     onProcess(renderer:ContainerRuleRenderer) {
 
-        if (renderer.rule.rules) {
+        if (renderer instanceof ContainerRuleRenderer) {
 
-            while (renderer.parent && !isContainer(renderer.parent)) {
 
-                const pKeys = renderer.parent.key.split(', ');
-                const sKeys = renderer.key.split(', ');
-                const newKey = sKeys.map(sKey => {
-                    return pKeys.map(pKey =>  {
+            let parentIsContainer = isContainer(renderer.parent);
 
-                        const replaced = sKey.replace(reExplicitNest, pKey);
-                        return replaced !== sKey ? replaced : `${pKey} ${sKey}`;
-                    }).join(', ')
-                }).join(', ');
+            const bubbleRender = (renderer as any);
+            bubbleRender._bubbles = !parentIsContainer && isBubbling(renderer) && [];
 
-                renderer.key = newKey;
+            while (!parentIsContainer) {
+
+                if (bubbleRender._bubbles) {
+                    bubbleRender._bubbles.push(renderer.parent.key);
+                } else {
+                    renderer.key = combineKeys(renderer.parent.key, renderer.key);
+                }
+
                 renderer = renderer.parent.children.pop();
 
                 if (this.options.onNest) {
@@ -35,6 +50,15 @@ export default class Nest {
                 renderer.parent = renderer.parent.parent;
 
                 renderer.parent.children.push(renderer);
+
+                parentIsContainer = isContainer(renderer.parent);
+            }
+
+            if (parentIsContainer && renderer.parent._bubbles) {
+
+                renderer.parent._bubbles.forEach(pkey => {
+                    renderer.key = combineKeys(pkey, renderer.key)
+                })
 
             }
         }

@@ -107,6 +107,19 @@ export default {
             },
             css: '@keyframes .class{0%{color:red;}100%{color:green;}}'
         },
+        {
+            desc: '@ rule bubbeling',
+            jss: {
+                '.class': {
+                    '@supports': {
+                        '&': {
+                            color: 'red'
+                        }
+                    }
+                }
+            },
+            css: '@supports{.class{color:red;}}'
+        }
 
     ]
 };

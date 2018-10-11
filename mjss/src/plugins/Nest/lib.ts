@@ -22,3 +22,13 @@ export function isContainer(renderer:RuleListRenderer) {
         return containerKeys.some(key => startsWith(renderer.key, key));
     }
 }
+
+const bubblingRules = [ // according to https://developer.mozilla.org/de/docs/Web/CSS/At-rule
+    '@media',
+    '@supports'
+];
+
+export function isBubbling(renderer:ContainerRuleRenderer) {
+
+    return bubblingRules.some(key => startsWith(renderer.key, key));
+}
