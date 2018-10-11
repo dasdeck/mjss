@@ -21,6 +21,5 @@ export default class ContainerRuleRenderer extends RuleListRenderer {
     toString() {
         const rulesCss = super.toString();
         return rulesCss && `${this.key}{${rulesCss}}` || '';
-
     }
 }

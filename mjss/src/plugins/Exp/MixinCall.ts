@@ -4,8 +4,9 @@ import ContainerRule from "../../ContainerRule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import RuleRender from "../../RuleRenderer";
 import EnvRule from "./EnvRule";
+import Renderable from "../../interface/Renderable";
 
-export default class MixinCall {
+export default class MixinCall implements Renderable {
 
     env: EnvRule
     exp: Exp

@@ -11,11 +11,11 @@ export function isEvaluable(str) {
 }
 
 export function isExpression(str) {
-    return str[0] === '/';
+    return str && str[0] === '/';
 }
 
 export function isTemplate(str) {
-    return str[0] === '`';
+    return str && str[0] === '`';
 }
 
 export function createExpression(str, context = {}) {

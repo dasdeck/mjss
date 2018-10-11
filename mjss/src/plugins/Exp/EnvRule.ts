@@ -4,6 +4,7 @@ import MixinCall from "./MixinCall";
 import Exp from ".";
 import { isFunction, isPlainObject, mapValues, last } from "lodash";
 import Rule from "../../Rule";
+import Import from "../../Import";
 
 class Stack {
 
@@ -29,7 +30,6 @@ export default class EnvRule extends ContainerRule {
     exp: Exp
     stack: Stack = new Stack()
     cache: any = {}
-
 
     constructor(sheet, exp: Exp, data = {}) {
         super(sheet, {}, '@env'); // pass empty data to avoid loading rules immediatly
@@ -70,6 +70,8 @@ export default class EnvRule extends ContainerRule {
         } else if (key in this.rules.rules) {
             const rule = this.rules.rules[key]
             return rule instanceof ContainerRule ? rule : rule.value;
+        } else if (key in this.context) {
+            return this.context[key];
         }
     }
 
@@ -77,11 +79,20 @@ export default class EnvRule extends ContainerRule {
         const self = this;
         this.context = {
             ...this.exp.options.context,
+            import(url) {
+                return new Import(self.sheet, url, self);
+            },
+            unquote(arg) {
+                return ~['"', "'"].indexOf(arg[0]) ? arg.substr(1, arg.length - 2) : arg;
+            },
             nf(name, ...args) {
                 return `${name}(${args.join(', ')})`
             },
             env(name) {
                 return self.get(name);
+            },
+            envu(arg) {
+                return this.unquote(this.env(arg));
             },
             call(name, mixinArg = {}, ...args) {
                 let member = self.get(name)

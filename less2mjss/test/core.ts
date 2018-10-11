@@ -137,6 +137,21 @@ export default {
                     'background-image': "/nf('url', `${env('val')}`)/"
                 }
             }
+        },
+        '@import': {
+            less: "@internal-fonts: 'test'; .font() when not (@internal-fonts = ~'') { @import 'https://fonts.googleapis.com/css?family=@{internal-fonts}';} .font();",
+            jss: {
+                '@env': {
+                    font: {
+                        "/!(env('internal-fonts') === '')/": {
+                            "/call('import', `'https://fonts.googleapis.com/css?family=${envu('internal-fonts')}'`)/": {}
+                        }
+                    },
+                    'internal-fonts': "'test'"
+                },
+                "/call('font')/": {}
+            }
+            // css: `@import "https://fonts.googleapis.com/css?family='test'";`
         }
 
     }

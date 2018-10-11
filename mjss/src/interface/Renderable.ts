@@ -1,5 +1,5 @@
+import RuleListRenderer from "../RuleListRenderer";
 
 export default interface Renderable {
-    toString():string
+    render(renderer: RuleListRenderer)
 }
-

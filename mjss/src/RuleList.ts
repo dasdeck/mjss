@@ -3,8 +3,9 @@ import ContainerRule from './ContainerRule';
 import Sheet from './Sheet';
 import Rule from './Rule';
 import RuleListRenderer from './RuleListRenderer';
+import Renderable from './interface/Renderable';
 
-export default class RuleList {
+export default class RuleList implements Renderable {
 
     sheet: Sheet
     args: Array<any>

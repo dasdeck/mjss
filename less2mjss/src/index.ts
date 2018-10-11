@@ -598,8 +598,9 @@ export function patchAST(rootNode, options) {
 
                     const pureNative = !context.dynamic && (node.value.match(/\bcalc\b\(/) || options.expandExpressions);
 
-                    value = node.value.replace(re, (part, name) => {
-                        return !pureNative ? `\${env('${name}')}` : `var(--${name})`;
+                    const env = context.unquote ? 'envu' : 'env';
+                     value = node.value.replace(re, (part, name) => {
+                        return !pureNative ? `\${${env}('${name}')}` : `var(--${name})`;
                     });
 
                     let quote = node.escaped || context.noQuotes ? '' : node.quote;
@@ -635,15 +636,15 @@ export function patchAST(rootNode, options) {
         } else if (node instanceof less.tree.Import) {
 
             node.render = function(context) {
-                const sContext = {...context, parent: this};
+                const sContext = {...context, parent: this, unquote: true};
                 let key;
                 if (context.pureStatic) {
-                    key = `@import ${this.path.render(sContext)}`;
+                    key = this.path.render(sContext);
                 } else {
-                    key = wrapTemplate(`@import \${${this.path.render(sContext)}}`);
+                    key = this.path.render(sContext);
                 }
 
-                return {[key]: {}};
+                return {[`/call('import', ${key})/`]: {}}
             };
 
         } else if (node instanceof less.tree.Element) {
@@ -817,7 +818,7 @@ export function less2mjss(lessString, options:any = {less: {}, skipEmptyRules: f
         } else {
             patchAST(root, options);
 
-            const context = {variables: {}, pureMixins: {}, variablesRaw: {}, component: null, components: {}, mixinsRaw: {}};
+            const context = {imports: {}, variables: {}, pureMixins: {}, variablesRaw: {}, component: null, components: {}, mixinsRaw: {}};
 
 
             result = {

@@ -1,14 +1,14 @@
-import Renderable from './interface/Renderable';
+import Stringable from './interface/Stringable';
 import Sheet from './Sheet';
 import RuleList from './RuleList';
 import {assign} from 'lodash';
 
-export default class RuleListRenderer implements Renderable {
+export default class RuleListRenderer implements Stringable {
 
     root: RuleList
     list: RuleList
     parent: RuleListRenderer|any
-    children: Array<Renderable>
+    children: Array<Stringable>
     sheet: Sheet
 
     constructor(list: RuleList, parent: RuleListRenderer = null) {
