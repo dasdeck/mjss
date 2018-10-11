@@ -247,6 +247,29 @@ export default {
             },
             css: '.class{width:10px;}',
             css2: '.class{width:20px;}'
+        },
+        'grouping': {
+            jss: {
+                "/group('group1')/": {
+                    '.class1': {
+                        color: 'red'
+                    }
+                }
+            },
+            css: '.class1{color:red;}'
+        },
+        'localized env': {
+            jss: {
+                "/group('group1')/": {
+                    '.class1': {
+                        color: "`${env('color1')}`"
+                    },
+                    '@env': {
+                        color1: 'red'
+                    }
+                }
+            },
+            css: '.class1{color:red;}'
         }
     }
 };

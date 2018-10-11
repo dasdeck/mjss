@@ -5,19 +5,20 @@ import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import RuleRender from "../../RuleRenderer";
 import EnvRule from "./EnvRule";
 import Renderable from "../../interface/Renderable";
+import Environment from "./Environment";
 
 export default class MixinCall implements Renderable {
 
-    env: EnvRule
+    env: Environment
     exp: Exp
     args: Array<any>
     rule: ContainerRule
 
-    constructor(rule:ContainerRule|object, args:any, env: EnvRule) {
+    constructor(rule:ContainerRule|object, args:any, env: Environment) {
         this.exp = env.exp;
         this.env = env;
         if (!(rule instanceof ContainerRule)) {
-            rule = env.rules.createRule(rule, '@mixin');
+            rule = env.sheet.rules.createRule(rule, '@mixin');
 
             if (!(rule instanceof ContainerRule)) {
                 throw 'invalid mixin';

@@ -1,12 +1,12 @@
 import Rule from "../../Rule";
 import {makeExpressive} from "./lib";
 import Exp from ".";
-import EnvRule from "./EnvRule";
+import Environment from "./Environment";
 
 export default class DynamicRule extends Rule {
 
     exp: Exp
-    env: EnvRule
+    env: Environment
 
     constructor(sheet, data, key, parent, exp) {
         super(sheet, data, key, parent);
@@ -16,8 +16,8 @@ export default class DynamicRule extends Rule {
 
         const context = this.env.getContext();
 
-        makeExpressive(this, 'key', context);
-        makeExpressive(this, 'value', context);
+        makeExpressive(this, 'key', {...context, $rule: this});
+        makeExpressive(this, 'value', {...context, $rule: this});
     }
 }
 

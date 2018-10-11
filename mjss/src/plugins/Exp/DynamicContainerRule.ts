@@ -4,12 +4,12 @@ import {makeExpressive} from "./lib";
 import Sheet from "../../Sheet";
 import Rule from "../../Rule";
 import Exp from ".";
-import EnvRule from "./EnvRule";
+import Environment from "./Environment";
 
 export default class DynamicContainerRule extends ContainerRule {
 
     exp: Exp
-    env: EnvRule
+    env: Environment
 
     constructor(sheet:Sheet, data:any, key:string, parent:Rule, exp:Exp) {
 
@@ -18,7 +18,7 @@ export default class DynamicContainerRule extends ContainerRule {
         this.env = exp.env;
         const context = this.env.getContext();
 
-        makeExpressive(this, 'key', context);
+        makeExpressive(this, 'key', {...context, $rule: this});
     }
 
     render(renderer: ContainerRuleRenderer) {
