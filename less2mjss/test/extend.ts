@@ -78,6 +78,17 @@ export default {
                     color: 'green'
                 }
             }
+        },
+        'matching test': {
+            less: '.test > .target .more {color: red} .extender { &:extend(.target all); }',
+            jss: {
+                '.test > .target .more': {
+                    color: 'red'
+                },
+                '.extender': {
+                    '@extend .target': {all: true}
+                }
+            }
         }
     }
 };

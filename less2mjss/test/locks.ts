@@ -23,17 +23,17 @@ times.stringTime = performance.now();
 export default {
     tests: {
 
-        [`uikit lock (jss => css) (ast:${times.cratedTime - times.startTime}ms css:${times.stringTime - times.cratedTime}ms)`]: {
-            jss,
-            css,
-            roundtrip: false
-        },
+        // [`uikit lock (jss => css) (ast:${times.cratedTime - times.startTime}ms css:${times.stringTime - times.cratedTime}ms)`]: {
+        //     jss,
+        //     css,
+        //     roundtrip: false
+        // },
 
-        'uikit lock (less => jss)': {
-            less: uikit,
-            jss,
-            roundtrip: false
-        }
+        // 'uikit lock (less => jss)': {
+        //     less: uikit,
+        //     jss,
+        //     roundtrip: false
+        // }
 
     }
 }

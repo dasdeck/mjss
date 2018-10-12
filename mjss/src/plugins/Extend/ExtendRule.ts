@@ -22,12 +22,12 @@ class Transformation {
             const targetSelectors = targetSelector.split(', ');
             const selectors = this.renderer.key.split(', ');
             if (this.rule.value.all) {
-                selectors.forEach(selector => {
-                    if (selector.match(this.rule.search)) {
-                        targetSelectors.forEach(targetSelector => {
+                targetSelectors.forEach(targetSelector => {
+                    selectors.forEach(selector => {
+                        if (selector.match(this.rule.search)) {
                             selectors.push(selector.replace(new RegExp(this.rule.className, 'g'), targetSelector));
-                        });
-                    }
+                        }
+                    });
                 });
             } else {
                 targetSelectors.forEach(targetSelector => {
