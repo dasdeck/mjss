@@ -50,6 +50,13 @@ export default class Environment {
 
     }
 
+    prepare() {
+        this.rules = mapValues(this.rules, (data, key) => this.sheet.createRule(data, key, null));
+        if (this.exp.options.cacheEnv) {
+            this.buildCache();
+        }
+    }
+
 
     get(key) {
         if (key in this.stack.head) {

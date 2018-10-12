@@ -1,6 +1,6 @@
 import RuleList from './RuleList';
 import RuleListRenderer from './RuleListRenderer';
-import { forEach } from 'lodash';
+import { forEach, isPlainObject } from 'lodash';
 import ContainerRule from './ContainerRule';
 import Rule from './Rule';
 
@@ -18,6 +18,7 @@ export default class Sheet {
         this.hooks = [
             'onInit',
             'onReady',
+            'onSheetReady',
             'createRule',
 
             'onProcess',
@@ -39,6 +40,8 @@ export default class Sheet {
         this.iterateAst(this.rules, rule => {
             this.hook('onReady', rule);
         });
+
+        this.hook('onSheetReady', this);
 
     }
 
@@ -63,6 +66,19 @@ export default class Sheet {
                 }
             }
         }
+    }
+
+    createRule(data:any, key:string, parent:Rule) {
+
+        let rule = this.hook('createRule', this, data, key, this);
+        if (!rule) {
+            if (!isPlainObject(data)) {
+                rule = new Rule(this, data, key, parent);
+            } else {
+                rule = new ContainerRule(this, data, key, parent);
+            }
+        }
+        return rule;
     }
 
     toString() {

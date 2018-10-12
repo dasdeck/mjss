@@ -1,5 +1,4 @@
-import {isObject, mapValues, isFunction} from 'lodash';
-import ContainerRule from './ContainerRule';
+import {mapValues} from 'lodash';
 import Sheet from './Sheet';
 import Rule from './Rule';
 import RuleListRenderer from './RuleListRenderer';
@@ -21,16 +20,7 @@ export default class RuleList implements Renderable {
     }
 
     createRule(data:any, key:string) {
-
-        let rule = this.sheet.hook('createRule', this.sheet, data, key, this);
-        if (!rule) {
-            if (!isObject(data) || isFunction(data)) {
-                rule = new Rule(this.sheet, data, key, this.rule);
-            } else {
-                rule = new ContainerRule(this.sheet, data, key, this.rule);
-            }
-        }
-        return rule;
+        return this.sheet.createRule(data, key, this.rule);
     }
 
     render(renderer:RuleListRenderer) {

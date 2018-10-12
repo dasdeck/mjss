@@ -1,17 +1,38 @@
-import ContainerRule from "../../ContainerRule";
+// import ContainerRule from "../../ContainerRule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import Exp from ".";
-import {assign} from 'lodash';
+import {merge, isPlainObject, size} from 'lodash';
+import { Sheet } from "../../..";
+import Rule from "../../Rule";
 
+import {iteratedMerge} from '../../util';
 
-export default class EnvRule extends ContainerRule {
+export default class EnvRule extends Rule {
 
     exp: Exp
 
-    constructor(sheet, exp: Exp, data = {}) {
-        super(sheet, data, '@env'); // pass empty data to avoid loading rules immediatly
+    constructor(sheet: Sheet, exp: Exp, data = {}) {
+        super(sheet, data,'@env', null);
         this.exp = exp;
-        this.exp.env.rules = {...this.exp.env.rules, ...this.rules.rules};
+
+        for (const key in data) {
+
+            const ruleToAdd = data[key];
+
+            // if (size(ruleToAdd)) {
+
+                if (key in this.exp.env.rules && isPlainObject(ruleToAdd))  {
+
+                    const merged = merge({}, this.exp.env.rules[key]);
+
+                    iteratedMerge(merged, ruleToAdd);
+                    this.exp.env.rules[key] = merged;
+                } else {
+                    this.exp.env.rules[key] = ruleToAdd;
+                }
+            // }
+
+        }
     }
 
     render(renderer: ContainerRuleRenderer) {

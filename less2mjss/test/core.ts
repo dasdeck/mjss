@@ -138,6 +138,14 @@ export default {
                 }
             }
         },
+        'font division bug': {
+            less: '.class1{font: 0/0 a;}',
+            jss: {
+                '.class1': {
+                    font: '0/0 a'
+                }
+            }
+        },
         '@import': {
             less: "@internal-fonts: 'test'; .font() when not (@internal-fonts = ~'') { @import 'https://fonts.googleapis.com/css?family=@{internal-fonts}';} .font();",
             jss: {

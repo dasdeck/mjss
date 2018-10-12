@@ -1,6 +1,5 @@
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import { isContainer, reExplicitNest, isBubbling } from "./lib";
-import RuleRender from "../../RuleRenderer";
 
 
 function combineKeys(pkey, cKey) {

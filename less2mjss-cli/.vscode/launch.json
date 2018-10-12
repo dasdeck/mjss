@@ -31,6 +31,18 @@
                 "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes/master-lilian/_import.less",
                 "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/uikit-themes/master-lilian/styles/white-green.less",
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test diff themes final",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "cwd": "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/less",
+            "args": [
+                "${workspaceFolder}/src/cli.ts",
+                "theme.*.less",
+                "diff"
+            ]
         }
     ]
 }

@@ -41,6 +41,43 @@ export default {
                     "/call('mixin')/": {}
                 }
             }
+        },
+        'proper mixinb merging': {
+            less: `@component: test;
+
+            .hook-base-body() {
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .hook-base-body() when (@internal-base-body-mode = overlay) {
+                position: relative;
+            }
+
+            @component: test2;
+
+            .hook-base-body() {
+            color: red;
+            }`,
+
+            jss: {
+                "/group('test')/": {
+                    "@env": {
+                        "hook-base-body": {
+                            "-webkit-font-smoothing": "antialiased",
+                            "/env('internal-base-body-mode') === 'overlay'/": {
+                            "position": "relative"
+                            }
+                        }
+                    }
+                },
+                "/group('test2')/": {
+                    "@env": {
+                        "hook-base-body": {
+                            "color": "red"
+                        }
+                    }
+                }
+            }
         }
         // TODO
         // 'inline mixin': {

@@ -10,7 +10,8 @@ const containerKeys = [ // according to https://developer.mozilla.org/de/docs/We
     '@font-face',
     '@keyframes',
     '@viewport',
-    '@-moz'
+    '@-moz',
+    '@-webkit'
 ];
 
 export const reExplicitNest = /&/g;

@@ -3,11 +3,13 @@ import * as fs from 'fs';
 import {Sheet, Exp, Nest, Extend} from 'mjss';
 import { functions } from 'less2mjss';
 
+
+
 export function replaceLessSource(source, subDir = process.cwd()) {
     return source.replace(/^\s?@import "(.*?)";/gm, (line, file) => {
-        const prefix = `@component: "${file}";\n`;
-
         const filePath = path.isAbsolute(file) ? file : path.join(subDir, file);
+        const prefix = `@component: "${filePath}";\n`;
+
 
         if (fs.existsSync(filePath)) {
             return prefix + concatLessSource(filePath);

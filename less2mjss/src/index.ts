@@ -4,31 +4,13 @@ import {isArray, mapKeys, forEach, some, size, merge, map, assign} from 'lodash'
 import lessFunctions from './lessFunctions';
 import {staticFunctions, customMixinFunctions, operatorMap} from './lib';
 import {nativeFunctions} from 'mjss-css-utils';
-import { isObject } from 'util';
+import {util} from 'mjss';
 
-
-function iteratedMerge(a, b) {
-
-    for (const key in b) {
-        if (key in a) {
-            if (~key.indexOf('@media')) {
-                debugger
-            }
-        }
-
-        if (isObject(a[key]) && isObject(b[key])) {
-            iteratedMerge(a[key], b[key]);
-        } else {
-            a[key] = b[key];
-        }
-    }
-
-}
+const iteratedMerge = util.iteratedMerge;
 
 export function patchAST(rootNode, options) {
 
     let dynID = 1;
-    let instanceId = 1;
 
     patchNode(rootNode);
 
@@ -47,7 +29,7 @@ export function patchAST(rootNode, options) {
 
             const dynamic = arg.isDynamic() || arg.hasVars() || context.fullDynamic;
 
-            const sContext = {...context, dynamic};
+            const sContext = {...context, parent: this, dynamic};
 
             if (dynamic && args.length > 1) {
                 return '${' + arg.render(sContext) + '}';
@@ -71,7 +53,7 @@ export function patchAST(rootNode, options) {
 
             node.render = function(context) {
 
-                const sContext = {...context};
+                const sContext = {...context, parent: this};
 
                 const args = node.value.map(v => v.render(sContext));
 
@@ -201,7 +183,15 @@ export function patchAST(rootNode, options) {
                 if (!context.hasVars) {
                     const res = {add(string){this.data += string}, data: ''};
                     this.eval({isMathOn: () => true}).genCSS({}, res);
-                    return res.data;
+                    if(res.data !== 'NaN') {
+                        return res.data;
+                    } else {
+                        res.data = '';
+                        this.eval({isMathOn: () => false}).genCSS({}, res);
+                        return res.data;
+                    }
+
+
                 }
 
                 const func = operatorMap[this.op.trim()];
@@ -214,7 +204,7 @@ export function patchAST(rootNode, options) {
                     exp = `call('${func}', ${this.operands[0].render(sContext)}, ${this.operands[1].render(sContext)})`;
                 }
 
-                if (parent.name === 'calc') {
+                if (parent && parent.name === 'calc') {
                     return `'${exp}'`;
                 } else if (options.expandExpressions) {
                     return `calc(${exp})`;
@@ -261,6 +251,14 @@ export function patchAST(rootNode, options) {
 
             };
 
+        } else if (node instanceof less.tree.Extend) {
+
+            node.render = function(context) {
+                const sContext = {...context, parent: this};
+                const key = `@extend ${this.selector.render(sContext)}`;
+                return {[key]: this.option ? {[this.option]: true} : {}};
+            }
+
         } else if (node instanceof less.tree.Ruleset) {
 
             node.render = function(context) {
@@ -298,18 +296,8 @@ export function patchAST(rootNode, options) {
 
                             if (prev[targetName]) {
 
-                                if (el.pure) {
+                                iteratedMerge(prev, newEl);
 
-                                    iteratedMerge(prev, newEl);
-
-                                } else {
-                                    const quote = name[0] === '`' ? '`' : '';
-                                    const cleanName = quote ? name.substr(1, name.length - 2) : name;
-                                    const newName = `${quote}${cleanName} /* id:${instanceId++} */${quote}`;
-
-                                    prev[newName] = el;
-
-                                }
                             } else {
                                 prev[targetName] = el;
                             }
@@ -338,20 +326,21 @@ export function patchAST(rootNode, options) {
 
                     const finalRules = condition ? {[wrapExpression(condition.render(sContext))]: rules} : rules;
 
-                    // if (condition) {
-
-                    //     generatedRules.condition = );
-
-                    // }
                     context.mixinsRaw[name] = node;
 
+                    if(pure) {
+                        name = name.substr(1);
+                    }
 
-                    // if (!specialMixin) {
+                    if (context.addToComponent({[name]: finalRules}, pure)) {
 
-                    // }
+                        return {};
+                    }
+
+
                     if (pure) {
-                        context.pureMixins[name.substr(1)] = context.pureMixins[name.substr(1)] || {};
-                        iteratedMerge(context.pureMixins[name.substr(1)], finalRules);
+                        context.pureMixins[name] = context.pureMixins[name] || {};
+                        iteratedMerge(context.pureMixins[name], finalRules);
                     } else {
                         result = {
                             [name]: finalRules
@@ -364,7 +353,11 @@ export function patchAST(rootNode, options) {
 
                 }
 
+                // debugger
                 context.set = lastSet;
+
+
+
                 return result;
             };
 
@@ -430,7 +423,8 @@ export function patchAST(rootNode, options) {
 
                 nameContext.pureStatic = !nameContext.hasVars;
 
-                const isRootVar = (!parent || parent.root) && node.variable;
+                const isRoot = !parent || parent.root;
+                const isRootVar = isRoot && node.variable;
                 const extractDynamic = sContext.dynamic && options.extractDynamicRules;
                 sContext.fullDynamic = node.variable || node.hasCustomFunction();
 
@@ -440,7 +434,8 @@ export function patchAST(rootNode, options) {
 
                     if (name === '@component') {
 
-                        context.component = node.value.render(sContext);
+                        const componentName = node.value.render(sContext);//.split('/').pop().split('.')[0];
+                        context.component = `/group('${componentName}')/`;
 
                     } else {
 
@@ -466,7 +461,9 @@ export function patchAST(rootNode, options) {
                         }
                         const finalValue = sContext.pureStatic ? res : wrapExpression(res);
 
-                        context.variables[`${finalName}`] = finalValue;
+                        if (!context.addToComponent({[finalName]:finalValue}, true)) {
+                            context.variables[finalName] = finalValue;
+                        }
 
                     }
 
@@ -500,9 +497,11 @@ export function patchAST(rootNode, options) {
                     // res = wrapInQuotes && !['"', "'"].includes(res[0]) ? `\`'\${${res}}'\`` : res;
                     res = sContext.pureStatic ? res : wrapExpression(res);
 
-                    return {
-                        [finalName]: res
-                    };
+                    if (!context.addToComponent({[finalName]:res})) {
+                        return {
+                            [finalName]: res
+                        };
+                    }
 
                 }
 
@@ -558,7 +557,12 @@ export function patchAST(rootNode, options) {
                     return {[`/call('${name}', {${argString}})/`]: {}};
 
                 } else {
-                    return {[`/call('${name}')/`]: {}};
+                    const res = {[`/call('${name}')/`]: {}};
+                    if (context.addToComponent(res)) {
+                        return {};
+                    } else {
+                        return res;
+                    }
                 }
 
             };
@@ -656,7 +660,7 @@ export function patchAST(rootNode, options) {
                 } else {
                     res += this.value;
                 }
-                const sContext = {...context, index};
+                const sContext = {...context, index, parent: this};
                 return (this.combinator.render(sContext) || '') + res;
             };
 
@@ -693,7 +697,7 @@ export function patchAST(rootNode, options) {
 
             node.render = function(context) {
 
-                const sContext = {...context, [node.type]: true};
+                const sContext = {...context, parent: this, [node.type]: true};
                 return `(${this.value.render(sContext)})`;
 
             };
@@ -702,7 +706,7 @@ export function patchAST(rootNode, options) {
 
             node.render = function(context) {
 
-                const sContext = {...context, [node.type]: true};
+                const sContext = {...context, parent: this, [node.type]: true};
 
                 node.root = node.rules[0].rules.root = 'media';
 
@@ -720,9 +724,16 @@ export function patchAST(rootNode, options) {
                 if (node.features.hasVars()) {
                     key = wrapTemplate(key);
                 }
-                return {
-                    [key]: content
-                };
+
+                if (context.addToComponent({[key]: content})) {
+                    return {};
+                } else {
+                    return {
+                        [key]: content
+                    };
+                }
+
+
 
             };
 
@@ -730,7 +741,7 @@ export function patchAST(rootNode, options) {
 
             node.render = function(context) {
 
-                const sContext = {...context, [node.type]: true};
+                const sContext = {...context, parent: this, [node.type]: true};
 
                 node.root = node.rules[0].rules.root = node.name;
 
@@ -740,11 +751,16 @@ export function patchAST(rootNode, options) {
 
                 const features = node.features && node.features.render(sContext) || node.value && node.value.render(sContext) || '';
 
-                // make exception for page (not a directive)
-
-                return {
+                const res = {
                     [`${node.name} ${features}`.trim()]: content
                 };
+                // make exception for page (not a directive)
+                if (context.addToComponent(res)) {
+                    return {};
+                } else {
+
+                    return res;
+                }
             };
 
         } else if (Array.isArray(node)) {
@@ -812,31 +828,57 @@ export function less2mjss(lessString, options:any = {less: {}, skipEmptyRules: f
 
     let result;
 
-    less.parse(lessString, options.less, (err, root) => {
+    less.parse(lessString,{...options.less, syncImport: true}, (err, root) => {
         if (err) {
             throw err.message;
         } else {
             patchAST(root, options);
 
-            const context = {imports: {}, variables: {}, pureMixins: {}, variablesRaw: {}, component: null, components: {}, mixinsRaw: {}};
+            const context = {
+                imports: {},
+                variables: {},
+                pureMixins: {},
+                variablesRaw: {},
+                component: null,
+                components: {},
+                mixinsRaw: {},
+                addToComponent(data, env) {
+                    if(this.parent && this.parent.root === true && this.component) {
+                        this.components[this.component] = this.components[this.component] || {};
+                        if (env) {
+                            this.components[this.component]['@env'] = this.components[this.component]['@env'] || {};
+                            iteratedMerge(this.components[this.component]['@env'], data, false);
+                        } else {
+
+                            iteratedMerge(this.components[this.component], data);
+                        }
+                        return true;
+                    }
+                }
+            };
+
 
 
             result = {
                 ...root.render(context)[':root']
             };
 
-            if (size(context.variables)) {
-                result['@env'] = context.variables;
-            }
+            if (size(context.components)) {
+                result = context.components;
+            } else {
+                if (size(context.variables)) {
+                    result['@env'] = context.variables;
+                }
 
-            if(size(context.pureMixins)) {
-                const env = result['@env'] = result['@env'] || {};
-                forEach(context.pureMixins, (mixin, name) => {
-                    if (env[name]) {
-                        throw 'mixin ' + name + ' overshadows variable declaration';
-                    }
-                    env[name] = mixin;
-                })
+                if(size(context.pureMixins)) {
+                    const env = result['@env'] = result['@env'] || {};
+                    forEach(context.pureMixins, (mixin, name) => {
+                        if (env[name]) {
+                            throw 'mixin ' + name + ' overshadows variable declaration';
+                        }
+                        env[name] = mixin;
+                    })
+                }
             }
         }
 

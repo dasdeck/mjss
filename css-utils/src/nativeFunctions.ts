@@ -14,4 +14,5 @@ export default [
     'translate3d',
     'translateZ',
     'scale3d',
+    'format'
 ];

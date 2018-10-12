@@ -19,15 +19,20 @@ class Transformation {
         const targetSelector = this.rule.getTargetSelector();
         if (targetSelector) {
 
+            const targetSelectors = targetSelector.split(', ');
             const selectors = this.renderer.key.split(', ');
             if (this.rule.value.all) {
                 selectors.forEach(selector => {
                     if (selector.match(this.rule.search)) {
-                        selectors.push(selector.replace(this.rule.className, targetSelector));
+                        targetSelectors.forEach(targetSelector => {
+                            selectors.push(selector.replace(new RegExp(this.rule.className, 'g'), targetSelector));
+                        });
                     }
                 });
             } else {
-                selectors.push(targetSelector);
+                targetSelectors.forEach(targetSelector => {
+                    selectors.push(targetSelector);
+                });
             }
 
             this.renderer.key = selectors.join(', ');

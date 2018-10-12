@@ -18,6 +18,10 @@ export default class Exp {
         this.env = new Environment(this, sheet); //new EnvRule(sheet, this, sheet.data['@env']);
     }
 
+    onSheetReady(sheet) {
+        this.env.prepare();
+    }
+
     createRule(sheet, rules, key, parent) {
         if (key === '@env') {
             return new EnvRule(sheet, this, rules);
