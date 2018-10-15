@@ -73,12 +73,7 @@ export default {
         'extend and nested (assumeStaticSelectors)': {
             extend: {assumeStaticSelectors: true},
             nest: {
-                onNest(renderer) {
-                    // TODO remove interdependency to Extend (expose callback?)
-                    if(renderer.parent.rule._extend) {
-                        renderer.rule._extend = renderer.parent.rule._extend;
-                    }
-                }
+                onNest: Extend.onNest
             },
             jss: {
                 '.target': {

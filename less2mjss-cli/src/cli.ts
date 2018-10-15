@@ -40,9 +40,6 @@ files.forEach(file => {
 
     if (!useCache || !fs.existsSync(cachePath) || !fs.existsSync(settingsFile) || fs.readFileSync(settingsFile, 'utf8') !== settings) {
 
-
-
-
         const source = template ? replaceLessSource(template.replace('$FILE', file)) : concatLessSource(file);
 
         try {

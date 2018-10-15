@@ -34,16 +34,17 @@ export default class Nest {
 
             while (!parentIsContainer) {
 
+                const oldKey = renderer.key;
                 if (bubbleRender._bubbles) {
                     bubbleRender._bubbles.push(renderer.parent.key);
                 } else {
-                    renderer.key = combineKeys(renderer.parent.key, renderer.key);
+                    renderer.key = combineKeys(renderer.parent.key, oldKey);
                 }
 
                 renderer = renderer.parent.children.pop();
 
                 if (this.options.onNest) {
-                    this.options.onNest(renderer)
+                    this.options.onNest(renderer, oldKey)
                 }
 
                 renderer.parent = renderer.parent.parent;

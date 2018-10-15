@@ -112,6 +112,25 @@ export default {
                     display: 'block'
                 }
             }
-        }
+        },
+        'match full complex selector': {
+            less: `.nav-tabs > li {
+                &:extend(.uk-tab > *);
+            }
+
+            .uk-tab > * {
+                flex: none;
+                position: relative;
+            }`,
+            jss: {
+                ".nav-tabs > li": {
+                  "@extend .uk-tab > *": {}
+                },
+                ".uk-tab > *": {
+                  "flex": "none",
+                  "position": "relative"
+                }
+            }
+        },
     }
 };

@@ -125,6 +125,24 @@ export default {
                         color: red;
                     }
               `
+         },
+         {
+            desc: 'escaped class names',
+            jss: {
+                ".alignleft": {
+                  "@extend .uk-align-left": {
+                    "all": true
+                  }
+                },
+                ".uk-align-left\\@s": {
+                  "float": "left"
+                }
+            },
+            css: `
+                .uk-align-left\\@s {
+                    float: left;
+                }
+            `
          }
     ]
 };

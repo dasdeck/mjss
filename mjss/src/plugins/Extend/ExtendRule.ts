@@ -76,9 +76,9 @@ export default class ExtendRule extends Rule {
         const search = escapeRegExp(className.substr(prefix.length));
         this.className = className;
         if (this.value.all) {
-            this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-]|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
+            this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-\\]|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
         } else {
-            this.search = new RegExp(/((?:,|^)\s*)(?:prefix(?:\b)search)(\b\s*(?:,|$))/.source.replace('prefix', prefix).replace('search', search), 'g');
+            this.search = new RegExp(/((?:,|^)\s*)(?:prefix(?:\b)search)(\b\s*(?:,|$)|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
         }
 
         this.replace  = new RegExp(this.search.source, 'g');

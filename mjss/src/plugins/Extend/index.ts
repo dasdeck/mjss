@@ -1,4 +1,4 @@
-import {startsWith} from 'lodash';
+import {startsWith, forEach} from 'lodash';
 import ExtendRule from './ExtendRule';
 import {patternExtend} from './lib';
 
@@ -61,6 +61,27 @@ export default class Extend {
 
     onBeforeOutput() {
         this.renderers.forEach(renderer => renderer._applyExtend())
+    }
+
+    /**
+     * helper function to transfer extend markings in nest plugin
+     * @param renderer
+     * @param oldKey
+     */
+    static onNest(renderer, oldKey:string) {
+
+        if (renderer.parent.rule._extend) {
+            if (oldKey.match(/&[^\s]/)) {
+
+                forEach(renderer.parent.rule._extend, extendRule => {
+                    extendRule.collect(renderer);
+                });
+
+            } else {
+
+                renderer.rule._extend = renderer.parent.rule._extend;
+            }
+        }
     }
 
 };
