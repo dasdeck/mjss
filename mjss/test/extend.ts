@@ -80,6 +80,51 @@ export default {
 
             },
             css: '.target, .extender2, .extender1{color:red;}.extender1{color:red;}.extender2, .extender1{color:red;}'
-        }
+        },
+        {
+            desc: 'extend an extender',
+            jss: {
+                ".tg1": {
+                  "color": "red"
+                },
+                ".ext1": {
+                  "@extend .tg1": {},
+                  "color": "green"
+                },
+                ".ext2": {
+                  "@extend .ext1": {},
+                  "color": "blue"
+                }
+              },
+            css: `.tg1, .ext1, .ext2{color:red;}.ext1, .ext2{color:green;}.ext2{color:blue;}`
+         },
+         {
+             desc: 'extend complex selector',
+             jss: {
+                ".nav-pills > li > a": {
+                  "padding": "10 10",
+                  "@extend .uk-subnav-pill > * > a": {
+                    "all": true
+                  }
+                },
+                ".uk-subnav-pill > * > a:hover, .uk-subnav-pill > * > a:focus": {
+                  "background-color": "red",
+                  "color": "red"
+                }
+              },
+              css: `
+                    .nav-pills>li>a {
+                        padding: 10 10;
+                    }
+
+                    .uk-subnav-pill>*>a:hover,
+                    .uk-subnav-pill>*>a:focus,
+                    .nav-pills>li>a:hover,
+                    .nav-pills>li>a:focus {
+                        background-color: red;
+                        color: red;
+                    }
+              `
+         }
     ]
 };

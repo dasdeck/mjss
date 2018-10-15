@@ -2,6 +2,7 @@ import Rule from "../../Rule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import { patternExtend } from "./lib";
 import Extend from ".";
+import {escapeRegExp} from 'lodash';
 
 let id = 1;
 
@@ -13,33 +14,43 @@ class Transformation {
     constructor(rule, renderer) {
         this.rule = rule;
         this.renderer = renderer;
+
     }
 
     apply() {
-        const targetSelector = this.rule.getTargetSelector();
-        if (targetSelector) {
+        const extender:any = this.rule.getExtender();
 
+        if (extender) {
 
-            const targetSelectors = targetSelector.split(', ');
-            const selectors = this.renderer.key.split(', ');
-            if (this.rule.value.all) {
-                targetSelectors.forEach(targetSelector => {
-                    selectors.forEach(selector => {
-                        const replaced = selector.replace(this.rule.search, (a, b, c) => {
-                            return `${b}${targetSelector}${c}`;
-                        });
-                        if (replaced !== selector) {
-                            selectors.push(replaced);
-                        }
-                    });
-                });
-            } else {
-                targetSelectors.forEach(targetSelector => {
-                    selectors.push(targetSelector);
-                });
+            if (extender._applyExtend) {
+                extender._applyExtend();
             }
 
-            this.renderer.key = selectors.join(', ');
+            const targetSelector = this.rule.getTargetSelector();
+            if (targetSelector) {
+
+
+                const targetSelectors = targetSelector.split(', ');
+                const selectors = this.renderer.key.split(', ');
+                if (this.rule.value.all) {
+                    targetSelectors.forEach(targetSelector => {
+                        selectors.forEach(selector => {
+                            const replaced = selector.replace(this.rule.search, (a, b, c) => {
+                                return `${b}${targetSelector}${c}`;
+                            });
+                            if (replaced !== selector) {
+                                selectors.push(replaced);
+                            }
+                        });
+                    });
+                } else {
+                    targetSelectors.forEach(targetSelector => {
+                        selectors.push(targetSelector);
+                    });
+                }
+
+                this.renderer.key = selectors.join(', ');
+            }
         }
     }
 }
@@ -62,7 +73,7 @@ export default class ExtendRule extends Rule {
 
         const className = this.key.substr(patternExtend.length);
         const prefix = className[0] === '.' ? '.' : '';
-        const search = className.substr(prefix.length);
+        const search = escapeRegExp(className.substr(prefix.length));
         this.className = className;
         if (this.value.all) {
             this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-]|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
@@ -87,16 +98,19 @@ export default class ExtendRule extends Rule {
         this.currentParrent = r;
     }
 
+    getExtender() {
+        return this.currentParrent;
+    }
 
     getTargetSelector() {
 
         return this.currentParrent && this.currentParrent.key;
     }
 
-    apply() {
-        this.transformations.forEach(t => t.apply());
-        this.transformations = [];
-    }
+    // apply() {
+    //     this.transformations.forEach(t => t.apply());
+    //     this.transformations = [];
+    // }
 
     addTransform(renderer) {
 
@@ -110,19 +124,27 @@ export default class ExtendRule extends Rule {
         renderer.transformations = renderer.transformations || [];
         renderer.transformations.push(trans);
 
-        this.transformations.push(trans);
+        if (!renderer._applyExtend) {
+            renderer._applyExtend = function() {
+                if (renderer.transformations) {
+                    const transforms = renderer.transformations;
+                    delete renderer.transformations;
+                    transforms.forEach(t => t.apply())
+                }
+            }
+        }
+        // this.transformations.push(trans);
+
+        // return trans;
 
     }
 
     collect(renderer) {
 
-        const match = this.extend.options.assumeStaticSelectors ?
-        renderer.rule._extend && renderer.rule._extend[this.id] :
-        renderer.key && renderer.key.match(this.search);
-
-        if (match) {
+        if (renderer.key && renderer.key.match(this.search)) {
             this.addTransform(renderer);
         }
+
 
     }
 

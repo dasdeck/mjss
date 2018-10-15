@@ -21,11 +21,9 @@ export default class Extend {
 
     onReady(rule) {
 
-        if (this.options.assumeStaticSelectors) {
-            for (const i in this.extends) {
-                const extend = this.extends[i];
-                extend.mark(rule);
-            }
+        for (const i in this.extends) {
+            const extend = this.extends[i];
+            extend.mark(rule);
         }
 
     }
@@ -63,9 +61,9 @@ export default class Extend {
 
     onBeforeOutput() {
 
-        for (const i in this.extends) {
-            const extend = this.extends[i];
-            extend.apply();
+        for (const i in this.renderers) {
+            const renderer = this.renderers[i];
+            renderer._applyExtend();
         }
 
     }

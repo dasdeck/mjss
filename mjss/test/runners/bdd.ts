@@ -2,6 +2,7 @@
 import * as suites from '..';
 import {pickBy, isObject, forEach} from 'lodash';
 import Sheet from '../../src/Sheet';
+import {css_beautify} from 'js-beautify';
 
 /* generates test with bdd style commands */
 
@@ -20,7 +21,7 @@ forEach(pickBy(suites, suite => isObject(suite) && (suite as any).tests), (block
 
                     row.test(sheet, {compare})
                 } else {
-                    compare(sheet.toString(), row.css)
+                    compare(css_beautify(sheet.toString()), css_beautify(row.css));
                 }
 
 
