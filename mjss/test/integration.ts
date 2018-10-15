@@ -93,6 +93,24 @@ export default {
                 }
             },
             css: '.target, .extender{color:black;}.target:hover, .extender:hover{color:green;}.extender{color:red;}'
+        },
+        'extend a target in mixin': {
+            jss: {
+
+                '@env': {
+                    mixin: {
+                        '.target': {
+                            color: 'red'
+                        }
+                    }
+                },
+                '.extender': {
+                    '@extend .target': {all: true},
+                    color: 'green'
+                },
+                "/call('mixin')/": {}
+            },
+            css: '.extender{color:green;}.target, .extender{color:red;}'
         }
     }
 }

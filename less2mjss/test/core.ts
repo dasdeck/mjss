@@ -107,7 +107,7 @@ export default {
                                 color: 'red'
                             }
                         },
-                        '@media (min-width: 100px) /* id:1 */': {
+                        '@media (min-width: 100px) /* id:2 */': {
                             '.class2': {
                                 width: '100px'
                             }
@@ -160,6 +160,17 @@ export default {
                 "/call('font')/": {}
             }
             // css: `@import "https://fonts.googleapis.com/css?family='test'";`
+        },
+        'iterated selectors': {
+            less: '.class1{color:red}.class1{color:green}',
+            jss: {
+                '.class1': {
+                    color: 'red'
+                },
+                '.class1 /* id:2 */': {
+                    color: 'green'
+                }
+            }
         }
 
     }

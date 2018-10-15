@@ -1,6 +1,8 @@
 import { isObject, isFunction, merge } from "lodash";
 
-let instanceId = 1;
+
+
+
 
 export function iteratedMerge(a, b, id:any = true) {
 
@@ -8,13 +10,17 @@ export function iteratedMerge(a, b, id:any = true) {
 
         if (isObject(a[key]) && isObject(b[key])) {
 
-            let targetKey = key;
-
             if (id === true || isFunction(id) && id(key)) {
 
+                let instanceId = 2;
+                let targetKey = key;
                 const quote = targetKey[0] === '`' ? '`' : '';
                 const cleanName = quote ? targetKey.substr(1, targetKey.length - 2) : targetKey;
-                targetKey = `${quote}${cleanName} /* id:${instanceId++} */${quote}`;
+
+                while (targetKey in a) {
+                    targetKey = `${quote}${cleanName} /* id:${instanceId++} */${quote}`;
+                }
+
                 a[targetKey] = b[key];
 
             } else {
@@ -32,3 +38,4 @@ export function iteratedMerge(a, b, id:any = true) {
     }
 
 }
+

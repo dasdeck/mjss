@@ -37,19 +37,17 @@ export default class Sheet {
 
         this.rules = new RuleList(this);
 
-        this.iterateAst(this.rules, rule => {
-            this.hook('onReady', rule);
-        });
+        this.iterateAst(this.rules.rules, rule => this.hook('onReady', rule));
 
         this.hook('onSheetReady', this);
 
     }
 
-    iterateAst(list:RuleList, action:Function) {
-        forEach(list.rules, (rule:Rule) => {
+    iterateAst(rules:any, action:Function) {
+        forEach(rules, (rule:Rule) => {
             action(rule);
             if (rule instanceof ContainerRule) {
-                this.iterateAst(rule.rules, action);
+                this.iterateAst(rule.rules.rules, action);
             }
         })
     }
@@ -70,12 +68,13 @@ export default class Sheet {
 
     createRule(data:any, key:string, parent:Rule) {
 
-        let rule = this.hook('createRule', this, data, key, this);
+        const cleanKey = key.replace(/\/\*.*?\*\//g, '').trim();
+        let rule = this.hook('createRule', this, data, cleanKey, this);
         if (!rule) {
             if (!isPlainObject(data)) {
-                rule = new Rule(this, data, key, parent);
+                rule = new Rule(this, data, cleanKey, parent);
             } else {
-                rule = new ContainerRule(this, data, key, parent);
+                rule = new ContainerRule(this, data, cleanKey, parent);
             }
         }
         return rule;

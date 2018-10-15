@@ -52,6 +52,8 @@ export default class Environment {
 
     prepare() {
         this.rules = mapValues(this.rules, (data, key) => this.sheet.createRule(data, key, null));
+        this.sheet.iterateAst(this.rules, rule => this.sheet.hook('onReady', rule));
+
         if (this.exp.options.cacheEnv) {
             this.buildCache();
         }

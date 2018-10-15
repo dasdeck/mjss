@@ -19,13 +19,17 @@ class Transformation {
         const targetSelector = this.rule.getTargetSelector();
         if (targetSelector) {
 
+
             const targetSelectors = targetSelector.split(', ');
             const selectors = this.renderer.key.split(', ');
             if (this.rule.value.all) {
                 targetSelectors.forEach(targetSelector => {
                     selectors.forEach(selector => {
-                        if (selector.match(this.rule.search)) {
-                            selectors.push(selector.replace(new RegExp(this.rule.className, 'g'), targetSelector));
+                        const replaced = selector.replace(this.rule.search, (a, b, c) => {
+                            return `${b}${targetSelector}${c}`;
+                        });
+                        if (replaced !== selector) {
+                            selectors.push(replaced);
                         }
                     });
                 });
@@ -61,9 +65,9 @@ export default class ExtendRule extends Rule {
         const search = className.substr(prefix.length);
         this.className = className;
         if (this.value.all) {
-            this.search = new RegExp(/prefix(?:\b)search(?:\b[^-]|$)/g.source.replace('prefix', prefix).replace('search', search));
+            this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-]|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
         } else {
-            this.search = new RegExp(/(?:,|^)\s*prefix(?:\b)search(?:\b\s*(?:,|$))/g.source.replace('prefix', prefix).replace('search', search));
+            this.search = new RegExp(/((?:,|^)\s*)(?:prefix(?:\b)search)(\b\s*(?:,|$))/.source.replace('prefix', prefix).replace('search', search), 'g');
         }
 
         this.replace  = new RegExp(this.search.source, 'g');

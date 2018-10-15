@@ -89,6 +89,29 @@ export default {
                     '@extend .target': {all: true}
                 }
             }
+        },
+        'iterated selector': {
+            less: `
+            .navbar .nav > li > .dropdown-menu {
+                border: none;
+                padding: 0;
+            }
+            .navbar .nav > li > .dropdown-menu { &:extend(.uk-navbar-dropdown all); }
+            .uk-navbar-dropdown.uk-open { display: block; }
+
+            `,
+            jss: {
+                '.navbar .nav > li > .dropdown-menu': {
+                    border: 'none',
+                    padding: "0"
+                },
+                '.navbar .nav > li > .dropdown-menu /* id:2 */': {
+                    '@extend .uk-navbar-dropdown': {all: true}
+                },
+                '.uk-navbar-dropdown.uk-open': {
+                    display: 'block'
+                }
+            }
         }
     }
 };
