@@ -107,18 +107,8 @@ export default class ExtendRule extends Rule {
         return this.currentParrent && this.currentParrent.key;
     }
 
-    // apply() {
-    //     this.transformations.forEach(t => t.apply());
-    //     this.transformations = [];
-    // }
-
     addTransform(renderer) {
 
-        if (!renderer.id) {
-            renderer.id = id++;
-        }
-
-        this.extend.renderers[renderer.id] = renderer;
 
         const trans = new Transformation(this, renderer);
         renderer.transformations = renderer.transformations || [];
@@ -133,9 +123,8 @@ export default class ExtendRule extends Rule {
                 }
             }
         }
-        // this.transformations.push(trans);
 
-        // return trans;
+        this.extend.renderers.push(renderer);
 
     }
 

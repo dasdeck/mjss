@@ -13,7 +13,7 @@ export default class Extend {
 
     extends: any = {}
     options: any
-    renderers: any = {}
+    renderers: Array<any> = []
 
     constructor(options: any = {}) {
         this.options = options;
@@ -60,12 +60,7 @@ export default class Extend {
     }
 
     onBeforeOutput() {
-
-        for (const i in this.renderers) {
-            const renderer = this.renderers[i];
-            renderer._applyExtend();
-        }
-
+        this.renderers.forEach(renderer => renderer._applyExtend())
     }
 
 };
