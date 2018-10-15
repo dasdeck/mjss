@@ -1,4 +1,4 @@
-import {startsWith, forEach} from 'lodash';
+import {startsWith, forEach, assign} from 'lodash';
 import ExtendRule from './ExtendRule';
 import {patternExtend} from './lib';
 
@@ -60,7 +60,7 @@ export default class Extend {
     }
 
     onBeforeOutput() {
-        this.renderers.forEach(renderer => renderer._applyExtend())
+        this.renderers.forEach(renderer => renderer._extend.apply())
     }
 
     /**
@@ -68,20 +68,22 @@ export default class Extend {
      * @param renderer
      * @param oldKey
      */
-    static onNest(renderer, oldKey:string) {
 
-        if (renderer.parent.rule._extend) {
-            if (oldKey.match(/&[^\s]/)) {
+    onSelectorChanged(renderer) {
 
-                forEach(renderer.parent.rule._extend, extendRule => {
-                    extendRule.collect(renderer);
-                });
 
-            } else {
+        if (this.options.assumeStaticSelectors) {
 
-                renderer.rule._extend = renderer.parent.rule._extend;
+            delete renderer.rule._extend;
+            if (renderer._extend) {
+                debugger
+                delete renderer._extend.rules;
             }
+            forEach(this.extends, extendRule => {
+                extendRule.collect(renderer);
+            });
         }
+
     }
 
 };

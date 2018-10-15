@@ -132,5 +132,52 @@ export default {
                 }
             }
         },
+        'prevent double extension': {
+            less: `
+                .uk-light {
+                    .uk-list-divider > li:nth-child(n+2) {
+                        border-top-color: red;
+                    }
+                }
+
+                .tm-toolbar:extend(.uk-light all) {}
+
+                .tm-child-list-divider > ul:extend(.uk-list-divider all) {}
+            `
+        },
+        'prevent extending nested case': {
+            less: `
+            .label, a.label { &:extend(.uk-label); }
+
+            .hook-inverse() {
+                .uk-label {
+                    color: red;
+                }
+            }
+
+            .uk-inverse {
+                .hook-inverse;
+            }
+            `,
+            jss:{
+                ".label, a.label": {
+                  "@extend .uk-label": {}
+                },
+                ".uk-inverse": {
+                  "/call('hook-inverse')/": {}
+                },
+                "@env": {
+                  "hook-inverse": {
+                    ".uk-label": {
+                      "color": "red"
+                    }
+                  }
+                }
+            },
+            css: `
+            .uk-inverse .uk-label {
+                color: red;
+            }`
+        }
     }
 };

@@ -10,21 +10,21 @@ import * as fs from 'fs';
 const uikitSourceDir = path.resolve(path.join(require.resolve('uikit'), '/../../../src/less/uikit.less'));
 
 export const uikit = concatLessSource(uikitSourceDir);
+export const lockOptions = () => {
+    const extender = new Extend({
+        assumeStaticSelectors: true
+    });
 
-export const lockOptions = () => ({
+    return {
     plugins: [
         new Exp({
             env: functions,
             cacheEnv: true
         }),
-        new Nest({
-            onNest: Extend.onNest
-        }),
-        new Extend({
-            assumeStaticSelectors: true
-        })
+        new Nest(),
+        extender
     ]
-});
+}};
 
 
 if (~process.argv.indexOf('write')) {

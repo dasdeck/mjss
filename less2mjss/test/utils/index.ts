@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import {Sheet, Exp, Nest, Extend} from 'mjss';
-import { functions } from 'less2mjss';
+import { functions as env } from 'less2mjss';
 
 
 
@@ -34,11 +34,10 @@ export function stripComments(input) {
 
 export function createSheet(jss) {
 
-    const env = functions;
     const options = {plugins: [
         new Exp({env}),
-        new Nest,
-        new Extend,
+        new Nest(),
+        new Extend({assumeStaticSelectors: true})
     ]};
 
     return new Sheet(options, jss);

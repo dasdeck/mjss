@@ -22,7 +22,8 @@ export default class Sheet {
             'createRule',
 
             'onProcess',
-            'onBeforeOutput'
+            'onBeforeOutput',
+            'onSelectorChanged'
         ].reduce((res, hookName) => {
 
             const hooks = this.options.plugins.filter(plugin => plugin[hookName]).map(plugin => plugin[hookName].bind(plugin));

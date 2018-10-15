@@ -1,5 +1,6 @@
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import { isContainer, reExplicitNest, isBubbling } from "./lib";
+import { Sheet } from "../../..";
 
 
 function combineKeys(pkey, cKey) {
@@ -16,10 +17,15 @@ function combineKeys(pkey, cKey) {
 }
 export default class Nest {
 
-    options:any;
+    options:any
+    sheet: Sheet
 
     constructor(options:any = {}) {
         this.options = options;
+    }
+
+    onInit(sheet: Sheet) {
+        this.sheet = sheet;
     }
 
     onProcess(renderer:ContainerRuleRenderer) {
@@ -32,26 +38,27 @@ export default class Nest {
             const bubbleRender = (renderer as any);
             bubbleRender._bubbles = !parentIsContainer && isBubbling(renderer) && [];
 
+            const oldKey = renderer.key;
+
             while (!parentIsContainer) {
 
-                const oldKey = renderer.key;
                 if (bubbleRender._bubbles) {
                     bubbleRender._bubbles.push(renderer.parent.key);
                 } else {
-                    renderer.key = combineKeys(renderer.parent.key, oldKey);
+                    renderer.key = combineKeys(renderer.parent.key, renderer.key);
                 }
 
                 renderer = renderer.parent.children.pop();
-
-                if (this.options.onNest) {
-                    this.options.onNest(renderer, oldKey)
-                }
 
                 renderer.parent = renderer.parent.parent;
 
                 renderer.parent.children.push(renderer);
 
                 parentIsContainer = isContainer(renderer.parent);
+            }
+
+            if (oldKey !== renderer.key) {
+                renderer.sheet.hook('onSelectorChanged', renderer);
             }
 
             if (parentIsContainer && renderer.parent._bubbles) {

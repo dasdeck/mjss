@@ -2,56 +2,87 @@ import Rule from "../../Rule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import { patternExtend } from "./lib";
 import Extend from ".";
-import {escapeRegExp} from 'lodash';
+import {escapeRegExp, reduce, forEach} from 'lodash';
 
 let id = 1;
 
 class Transformation {
 
-    rule: ExtendRule
+    rules: Array<ExtendRule> = []
     renderer: ContainerRuleRenderer
+    cachedSelectors: Array<string>
 
-    constructor(rule, renderer) {
-        this.rule = rule;
+    constructor(renderer) {
         this.renderer = renderer;
 
     }
 
+    getOriginalSelectors():Array<string> {
+        if (!this.cachedSelectors) {
+            this.cachedSelectors = this.renderer.key.split(', ');
+        }
+        return this.cachedSelectors;
+    }
+
     apply() {
-        const extender:any = this.rule.getExtender();
 
-        if (extender) {
+        if (!this.rules.length) {
+            return;
+        }
 
-            if (extender._applyExtend) {
-                extender._applyExtend();
+        const extendMap = {all: {}, _: {}};
+        while (this.rules.length) {
+
+            const rule = this.rules.shift();
+
+            const extender:any = rule.getExtender();
+
+            if (extender) {
+
+                if (extender._extend) {
+                    extender._extend.apply();
+                }
             }
 
-            const targetSelector = this.rule.getTargetSelector();
-            if (targetSelector) {
+            const set = rule.value.all ? extendMap.all : extendMap._;
 
+            let entry = set[rule.className] || {selectors: [], search: rule.search};
+            entry.selectors = [...entry.selectors, ...rule.getTargetSelectors()];
+            set[rule.className] = entry;
 
-                const targetSelectors = targetSelector.split(', ');
-                const selectors = this.renderer.key.split(', ');
-                if (this.rule.value.all) {
-                    targetSelectors.forEach(targetSelector => {
-                        selectors.forEach(selector => {
-                            const replaced = selector.replace(this.rule.search, (a, b, c) => {
-                                return `${b}${targetSelector}${c}`;
-                            });
-                            if (replaced !== selector) {
-                                selectors.push(replaced);
-                            }
-                        });
-                    });
-                } else {
-                    targetSelectors.forEach(targetSelector => {
-                        selectors.push(targetSelector);
-                    });
+        }
+
+        const newSelectors = [];
+
+        forEach(extendMap.all, (entry:any) => {
+            const selectors = this.getOriginalSelectors().map(selector => {
+                const res = entry.search.exec(selector);//selector.match()
+
+                if (res) {
+                    const pre = res[1] || '';
+                    const post = res[2] || '';
+                    debugger;
+                    return selector => `${pre}${selector}${post}`;
                 }
 
-                this.renderer.key = selectors.join(', ');
-            }
-        }
+                // return selector;
+            }).filter(v => v);
+
+            entry.selectors.forEach(targetSelector => {
+                selectors.forEach(selector => {
+                    newSelectors.push(selector(targetSelector));
+                });
+            });
+        });
+
+        forEach(extendMap._, (entry:any) => {
+            entry.selectors.forEach(targetSelector => {
+                newSelectors.push(targetSelector);
+            });
+        });
+
+
+        this.renderer.key = [this.renderer.key, ...newSelectors].join(', ');
     }
 }
 export default class ExtendRule extends Rule {
@@ -60,6 +91,7 @@ export default class ExtendRule extends Rule {
     search: RegExp
     replace: RegExp
     currentParrent: ContainerRuleRenderer
+    cachedTargetSelectors: Array<string>
     transformations: Array<any> = []
     extend: Extend
     id: number
@@ -86,6 +118,11 @@ export default class ExtendRule extends Rule {
     }
 
     mark(rule) {
+
+        if (rule instanceof ExtendRule) {
+            return
+        }
+
         const match = rule.key && rule.key.match && rule.key.match(this.search);
         if (match) {
 
@@ -102,34 +139,34 @@ export default class ExtendRule extends Rule {
         return this.currentParrent;
     }
 
-    getTargetSelector() {
+    getTargetSelectors() {
 
-        return this.currentParrent && this.currentParrent.key;
+        if (this.getExtender() && !this.cachedTargetSelectors) {
+            this.cachedTargetSelectors = this.getExtender().key.split(', ');
+        }
+        return this.cachedTargetSelectors || [];
     }
 
     addTransform(renderer) {
 
-
-        const trans = new Transformation(this, renderer);
-        renderer.transformations = renderer.transformations || [];
-        renderer.transformations.push(trans);
-
-        if (!renderer._applyExtend) {
-            renderer._applyExtend = function() {
-                if (renderer.transformations) {
-                    const transforms = renderer.transformations;
-                    delete renderer.transformations;
-                    transforms.forEach(t => t.apply())
-                }
-            }
+        if (!renderer._extend) {
+            renderer._extend = new Transformation(renderer);
+            this.extend.renderers.push(renderer);
         }
 
-        this.extend.renderers.push(renderer);
+        renderer._extend.rules.push(this);
+
+    }
+
+    matches(rule) {
 
     }
 
     collect(renderer) {
 
+        if (renderer.rule instanceof ExtendRule) {
+            return
+        }
         if (renderer.key && renderer.key.match(this.search)) {
             this.addTransform(renderer);
         }
