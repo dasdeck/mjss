@@ -13,4 +13,5 @@ collection of packages for mjss
 ## TODO
 
 fix Extend plugin's replace regex
-improve Cleanup plugin -> try to move it to create phase ?
+normalize selectors for better extend matching
+different extend matching approach?
