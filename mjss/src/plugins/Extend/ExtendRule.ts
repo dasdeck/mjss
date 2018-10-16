@@ -109,13 +109,17 @@ export default class ExtendRule extends Rule {
 
     }
 
+    matches(key) {
+        return key.includes(this.className) && key.match(this.search);
+    }
+
     mark(rule) {
 
         if (rule instanceof ExtendRule) {
             return
         }
 
-        const match = rule.key && rule.key.match && rule.key.match(this.search);
+        const match = rule.key && rule.key.match && this.matches(rule.key);
         if (match) {
 
             rule._extend = rule._extend || {};
@@ -150,16 +154,12 @@ export default class ExtendRule extends Rule {
 
     }
 
-    matches(rule) {
-
-    }
-
     collect(renderer) {
 
         if (renderer.rule instanceof ExtendRule) {
             return
         }
-        if (renderer.key && renderer.key.match(this.search)) {
+        if (renderer.key && this.matches(renderer.key)) {
             this.addTransform(renderer);
         }
 

@@ -78,6 +78,31 @@ export default {
                     }
                 }
             }
+        },
+        'svg-fill': {
+            less: `
+                .svg-fill(@src, @color-default, @color-new, @property: background-image) {
+
+                    @escape-color-default: escape(@color-default);
+                    @escape-color-new: escape("@{color-new}");
+
+                    @data-uri: data-uri('image/svg+xml;charset=UTF-8', "@{src}");
+                    @replace-src: replace("@{data-uri}", "@{escape-color-default}", "@{escape-color-new}", "g");
+
+                    @{property}: e(@replace-src);
+                }
+
+                .class1{
+                    .svg-fill('${__dirname}/data/empty.svg', #000, blue);
+                }
+            `,
+            jss: {
+
+                '.class1': {
+                    'background-image': 'url("data:image/svg+xml;charset=UTF-8,")'
+                }
+            }
+
         }
         // TODO
         // 'inline mixin': {

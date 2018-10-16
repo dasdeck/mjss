@@ -1,23 +1,22 @@
 import {createSheet} from './test/utils';
 import {less2mjss} from '.';
 import {uikit} from './test/utils/lock';
-
+import * as less from 'less';
 // const jss = less2mjss('@component: test; @media (max-width: 200px) {.class1{color: red;}}');
-// const jss = less2mjss(`
 
-// 		.label, a.label { &:extend(.uk-label); }
 
-// 		.hook-inverse() {
-// 			.uk-label {
-// 				color: red;
-// 			}
-// 		}
+const source = `
+.class1{background-image: data-uri("image/svg+xml;charset=UTF-8", "./test/data/empty.svg");}
+`
 
-// 		.uk-inverse {
-// 			.hook-inverse;
-// 		}
+const jss = less2mjss(source);
+let lessCss;
+less.render(source, (err,res) => {
+	debugger;
+	lessCss = res.css;
+});
 
-// 	`);
+debugger
 
 const sheet = createSheet({
 	'.target': {

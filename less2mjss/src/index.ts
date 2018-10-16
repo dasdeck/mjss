@@ -332,6 +332,11 @@ export function patchAST(rootNode, options) {
                         name = name.substr(1);
                     }
 
+                    if (pure && specialMixin) {
+                        debugger;
+                        return {};
+                    }
+
                     if (context.addToComponent({[name]: finalRules}, pure)) {
 
                         return {};
