@@ -1,7 +1,7 @@
 import {less2mjss} from 'less2mjss';
 import {concatLessSource, replaceLessSource, stripComments} from 'less2mjss/test/utils'
 import {lockOptions} from 'less2mjss/test/utils/lock'
-
+import {staticFunctions} from 'less2mjss/src/serverFunctions'
 import {Sheet} from 'mjss';
 import {css_beautify as cssFormat} from 'js-beautify';
 
@@ -44,7 +44,7 @@ files.forEach(file => {
 
         try {
 
-            const mjss = less2mjss(source);
+            const mjss = less2mjss(source, {staticFunctions});
 
             const css: any = {};
 

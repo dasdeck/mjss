@@ -5,6 +5,7 @@ import {pickBy, isObject, forEach, isString} from 'lodash';
 import * as less from 'less';
 import {css_beautify} from 'js-beautify';
 import { less2mjss } from 'less2mjss';
+import {staticFunctions} from '../../src/serverFunctions';
 
 import {createSheet} from '../utils';
 /* generates test with bdd style commands */
@@ -37,7 +38,7 @@ forEach(pickBy(suites, suite => isObject(suite) && suite.tests), (block:any, nam
             let jssCss;
 
             if (lessString) {
-                jss = less2mjss(lessString);
+                jss = less2mjss(lessString, {staticFunctions});
                 less.render(lessString, (err, res) => {
                     lessCss = css_beautify(res.css);
                 });

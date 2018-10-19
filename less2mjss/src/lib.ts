@@ -1,7 +1,6 @@
 import lessFunctions from './lessFunctions';
 import {mapKeys} from 'lodash';
 import {UnitNumber} from 'mjss-css-utils';
-import * as fs from 'fs';
 
 export const operatorMap = {
     '*': 'mul',
@@ -25,25 +24,35 @@ export function unQuote(string) {
 }
 
 export const staticFunctions = {
-    // e: lessFunctions.e
+
+    inline(url, mimeType = 'image/svg+xml') {
+
+        console.warn('resources can not be inlined in browser')
+        return url;
+    },
+
     'data-uri'(mimeType, url) {
 
         if (!url) {
             url = mimeType;
-            mimeType = 'image/svg+xml';
+            mimeType = null;
         }
 
-        // console.log({
-        //     url,
-        //     cwd: process.cwd()
-        // })
-        url = unQuote(url);
-        if (fs.existsSync(url)) {
-            const svgData = fs.readFileSync(url, 'utf8');
-            return `url("data:${unQuote(mimeType)},${encodeURIComponent(svgData)}")`;
-        } else {
-            return `url("${url}")`;
+        return `url("${this.inline(url, mimeType)}")`;
+    },
+
+    'svg-fill'(src, defaultColor, newColor, property = "'background-image'") {
+
+        const svgData = this.inline(src, 'image/svg+xml;charset=UTF-8');
+        const code = `'${svgData}'.replace(new RegExp(encodeURIComponent(${defaultColor}), 'g'), ${newColor})`;
+        const value = '`url("${' + code + '}")`';
+
+        const prop = "`${" + property + "}`";
+
+        return {
+            [prop]: value
         }
+
     }
 };
 
