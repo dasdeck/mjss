@@ -2,7 +2,6 @@ import {startsWith, forEach, assign} from 'lodash';
 import ExtendRule from './ExtendRule';
 import {patternExtend} from './lib';
 
-
 /*
 extend may set the result key to a renderable object because it needs to be lazy
 to ensure it extends target rules with its final parent
@@ -71,12 +70,10 @@ export default class Extend {
 
     onSelectorChanged(renderer) {
 
-
         if (this.options.assumeStaticSelectors) {
 
             delete renderer.rule._extend;
             if (renderer._extend) {
-                debugger
                 delete renderer._extend.rules;
             }
             forEach(this.extends, extendRule => {

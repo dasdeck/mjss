@@ -143,6 +143,27 @@ export default {
                     float: left;
                 }
             `
-         }
+         },
+         {
+            desc: 'multi target',
+            jss: {
+                ".extender": {
+                "@extend .target": {
+                    "all": true
+                }
+                },
+                ".target, .extraSelector": {
+                "color": "red"
+                }
+            },
+            css: `
+                .target,
+                .extraSelector,
+                .extender {
+                    color: red;
+                }
+            `
+        }
+
     ]
 };

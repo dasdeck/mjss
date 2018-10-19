@@ -28,7 +28,7 @@ export const staticFunctions = {
     inline(url, mimeType = 'image/svg+xml') {
 
         console.warn('resources can not be inlined in browser')
-        return url;
+        return `' + ${url} + '`;
     },
 
     'data-uri'(mimeType, url) {

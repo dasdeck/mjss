@@ -57,7 +57,7 @@ class Transformation {
         forEach(extendMap.all, (entry:any) => {
             const selectors = this.getOriginalSelectors().map(selector => {
                 const res = selector.replace(entry.search, (a,b,c) => `${b}%%${c}`).split('%%');
-                return selector => res.join(selector);
+                return res.length > 1 ? selector => res.join(selector) : null;
             }).filter(v => v);
 
             entry.selectors.forEach(targetSelector => {
