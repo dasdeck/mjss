@@ -438,11 +438,16 @@ export function less2mjss(lessString, options:any = {less: {}, skipEmptyRules: f
 
                             const componentName = node.value.render(sContext);
                             context.component = `/group('${componentName}')/`;
+                            context.file = componentName.substr(1, componentName.length - 2);
 
                         } else {
 
                             context.variablesRaw[name] = node;
-                            const value = node.value.render(sContext);
+                            let value = node.value.render(sContext);
+
+                            if (value.includes('.svg') && staticFunctions.inline) {
+                                value = staticFunctions.inline(value, 'image/svg+xml;charset=UTF-8',  options.inline);
+                            }
 
                             const finalName = name.substr(1);
 

@@ -21,15 +21,15 @@ Color.prototype.toString = function() {
 ]*/
 
 export function darken(color, amount) {
-    return Color(color).darken(parseFloat(amount));
+    return Color(color.toString()).darken(parseFloat(amount));
 }
 
 export function lighten(color, amount) {
-    return Color(color).lighten(parseFloat(amount));
+    return Color(color.toString()).lighten(parseFloat(amount));
 }
 
 export function fadeout(color, amount) {
-    color = Color(color);
+    color = Color(color.toString());
 
     amount = parseFloat(amount) / 100;
     color = color.setAlpha(color.getAlpha() - amount);
@@ -41,27 +41,27 @@ export function saturate(color, amount) {
 
     amount = parseFloat(amount);
 
-    return Color(color).saturate(amount);
+    return Color(color.toString()).saturate(amount);
 }
 
 export function desaturate(color, amount) {
-    return saturate(color, `-${amount}`);
+    return saturate(color.toString(), `-${amount}`);
 }
 
 export function spin(color, amount) {
-    return Color(color).spin(parseFloat(amount));
+    return Color(color.toString()).spin(parseFloat(amount));
 }
 
 export function tint(color, amount) {
-    return mix(Color({r: 255, g: 255, b: 255}), Color(color), amount);
+    return mix(Color({r: 255, g: 255, b: 255}), Color(color.toString()), amount);
 }
 
 export function mix(color, color2, amount = '50%') {
-    return Color.mix(Color(color2), Color(color), parseFloat(amount)-0.0001);
+    return Color.mix(Color(color2.toString()), Color(color.toString()), parseFloat(amount)-0.0001);
 }
 
 export function fade(color, amount) {
-    return Color(color).setAlpha(parseFloat(amount) / 100);
+    return Color(color.toString()).setAlpha(parseFloat(amount) / 100);
 }
 
 

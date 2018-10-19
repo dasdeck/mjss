@@ -42,7 +42,9 @@
             "args": [
                 "${workspaceFolder}/src/cli.ts",
                 "theme.*.less",
-                "diff"
+                "diff",
+                "inline",
+                "/Applications/MAMP/htdocs/joomla/3.8.3/templates/yootheme/vendor/assets/**"
             ]
         }
     ]

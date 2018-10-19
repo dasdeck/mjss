@@ -20,6 +20,7 @@ const templateIndex = process.argv.indexOf('template')+1;
 const produceDiff = ~process.argv.indexOf('diff');
 const useCache = ~process.argv.indexOf('cache');
 const cacheDir = path.join(process.cwd(), '.less2mjss');
+const inline = process.argv.indexOf('inline') + 1 && process.argv[process.argv.indexOf('inline') + 1];
 
 const template = templateIndex && process.argv[templateIndex] || '';
 const pattern = path.isAbsolute(process.argv[2]) ? process.argv[2] : path.join(process.cwd(), process.argv[2]);
@@ -39,12 +40,12 @@ files.forEach(file => {
 
 
     if (!useCache || !fs.existsSync(cachePath) || !fs.existsSync(settingsFile) || fs.readFileSync(settingsFile, 'utf8') !== settings) {
-
-        const source = template ? replaceLessSource(template.replace('$FILE', file)) : concatLessSource(file);
+        const source = fs.readFileSync(file, 'utf8');
+        const sourceConcat = template ? replaceLessSource(template.replace('$FILE', file)) : replaceLessSource(source);
 
         try {
 
-            const mjss = less2mjss(source, {staticFunctions});
+            const mjss = less2mjss(sourceConcat, {staticFunctions, inline});
 
             const css: any = {};
 
@@ -52,13 +53,11 @@ files.forEach(file => {
 
             css.mjss = css_beautify(sheet.toString());
 
-            less.render(source, {syncImport: true}, (err, res) => {
+            less.render(source, {syncImport: true, ieCompat: false, relativeUrls: true}, (err, res) => {
                 css.less = css_beautify(res.css);
             });
 
-
             mkpath.sync(cachePath);
-
 
             if (produceDiff) {
                 const diffPatch = diff.createPatch(file, css.less, css.mjss, '', '');
@@ -70,7 +69,7 @@ files.forEach(file => {
             }
 
             fs.writeFileSync(settingsFile, settings);
-            fs.writeFileSync(path.join(cachePath, 'source.less'), source);
+            fs.writeFileSync(path.join(cachePath, 'source.less'), sourceConcat);
             fs.writeFileSync(path.join(cachePath, 'less.css'), css.less);
             fs.writeFileSync(path.join(cachePath, 'mjss.css'), css.mjss);
             fs.writeFileSync(path.join(cachePath, 'mjss.json'), JSON.stringify(mjss, null, 2));

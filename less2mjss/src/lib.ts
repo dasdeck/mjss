@@ -43,15 +43,19 @@ export const staticFunctions = {
 
     'svg-fill'(src, defaultColor, newColor, property = "'background-image'") {
 
-        const svgData = this.inline(src, 'image/svg+xml;charset=UTF-8');
-        const code = `'${svgData}'.replace(new RegExp(encodeURIComponent(${defaultColor}), 'g'), ${newColor})`;
-        const value = '`url("${' + code + '}")`';
-
+        const svgData = src.indexOf('env(') === 0 ? src : `'${this.inline(src)}'`;
         const prop = "`${" + property + "}`";
+        let value;
+        if (svgData) {
+            const code = `call('escape', ${svgData}.replace(new RegExp( ${defaultColor}, 'g'), ${newColor}))`;
+            value = '`url("data:image/svg+xml;charset=UTF-8,${' + code + '}")`';
+        } else {
+            value = src;
+        }
 
         return {
             [prop]: value
-        }
+        };
 
     }
 };
