@@ -8,7 +8,7 @@ import {css_beautify} from 'js-beautify';
 
 forEach(pickBy(suites, suite => isObject(suite) && (suite as any).tests), (block:any, name) => {
 
-    const compare = (a, b) => expect(a).toBe(b);
+    const compare = (a, b) => expect(css_beautify(a)).toBe(css_beautify(b));
     describe(name, () => {
 
         forEach(block.tests, (row, desc) => {
@@ -21,7 +21,7 @@ forEach(pickBy(suites, suite => isObject(suite) && (suite as any).tests), (block
 
                     row.test(sheet, {compare})
                 } else {
-                    compare(css_beautify(sheet.toString()), css_beautify(row.css));
+                    compare(sheet.toString(), row.css);
                 }
 
 

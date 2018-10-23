@@ -5,8 +5,8 @@
 	],
 	"scripts": {
 		"test": "jest",
-		"watch": "concurrently --kill-others 'yarn test --watchAll' 'yarn --cwd mjss build --watch' 'yarn --cwd less2mjss watch' 'yarn --cwd css-utils build --watch'",
-		"link-all": "yarn --cwd mjss link && yarn --cwd less2mjss link && yarn --cwd css-utils link",
+		"watch": "concurrently --kill-others 'yarn test --watchAll' 'yarn --cwd mjss build --watch' 'yarn --cwd less2mjss watch' 'yarn --cwd mjss-css-utils build --watch'",
+		"link-all": "yarn --cwd mjss link && yarn --cwd less2mjss link && yarn --cwd mjss-css-utils link",
 		"coverage": "jest --coverage"
 	},
 	"jest": {

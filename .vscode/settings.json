@@ -8,7 +8,7 @@
     "mjss": true,
     "less2mjss": true,
     "less2mjss-cli": true,
-    "css-utils": true,
+    "mjss-css-utils": true,
     "sjss": true
   }
 }

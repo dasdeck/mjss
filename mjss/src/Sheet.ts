@@ -70,7 +70,7 @@ export default class Sheet {
     createRule(data:any, key:string, parent:Rule) {
 
         const cleanKey = key.replace(/\/\*.*?\*\//g, '').trim();
-        let rule = this.hook('createRule', this, data, cleanKey, this);
+        let rule = this.hook('createRule', this, data, cleanKey, parent);
         if (!rule) {
             if (!isPlainObject(data)) {
                 rule = new Rule(this, data, cleanKey, parent);
@@ -81,13 +81,15 @@ export default class Sheet {
         return rule;
     }
 
-    toString() {
-
+    toRenderer() {
         const renderer = new RuleListRenderer(this.rules);
         this.rules.render(renderer);
         this.hook('onBeforeOutput', renderer);
-        return renderer.toString();
+        return renderer;
+    }
 
+    toString() {
+        return this.toRenderer().toString();
     }
 
 }

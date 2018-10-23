@@ -25,6 +25,21 @@ export default class UnitNumber {
         return this.val;
     }
 
+    getFinestResolution() {
+
+        const decimals = this.getDecimals();
+        if(decimals) {
+            const size = Math.pow(10, -decimals);
+            return size;
+        } else {
+            return 1;
+        }
+    }
+
+    getDecimals() {
+        return (String(this.val).split('.')[1] || '').length;
+    }
+
     static create(value) {
 
         if (value instanceof UnitNumber) {
@@ -41,11 +56,11 @@ export default class UnitNumber {
 
             const hasUnits = floatVal != value; // eslint-disable-line
 
-            if (hasUnits) {
+            // if (hasUnits) {
                 return new UnitNumber(value);
-            } else {
-                return floatVal;
-            }
+            // } else {
+                // return floatVal;
+            // }
 
         }
     }

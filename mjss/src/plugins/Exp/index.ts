@@ -10,7 +10,7 @@ export default class Exp {
     options: any
     env: Environment
 
-    constructor(options: any = {forceUniqueKeys: false, cacheEnv: false, context: {}, env: {}}) {
+    constructor(options: any = {forceUniqueKeys: false, cacheEnv: false, context: {}, env: {}, extractExpressions: false}) {
         this.options = options;
     }
 
@@ -18,7 +18,7 @@ export default class Exp {
         this.env = new Environment(this, sheet); //new EnvRule(sheet, this, sheet.data['@env']);
     }
 
-    onSheetReady(sheet) {
+    onSheetReady() {
         this.env.prepare();
     }
 
@@ -28,7 +28,7 @@ export default class Exp {
         } else if (isEvaluable(key) && isPlainObject(rules)) {
             return new DynamicContainerRule(sheet, rules, key, parent, this)
         } else if (isEvaluable(key) || isEvaluable(rules)) {
-            return new DynamicRule(sheet, rules, key, parent, this)
+            return new DynamicRule(sheet, rules, key, parent, this);
         }
     }
 

@@ -1,11 +1,14 @@
 import {Sheet, Nest, Exp} from '.';
 
 
-const sheet = new Sheet({plugins: [new Exp, new Nest]}, {
-    "/group('group1')/": {
-        '.class1': {
-            color: 'red'
-        }
+const sheet = new Sheet({plugins: [new Exp({extractExpressions: true}), new Nest]}, {
+    '@env': {
+        a: '1px',
+        b: '1px',
+        width: "/call('add', env('a'), env('b'))/"
+    },
+    '.class': {
+        width: "/env('width')/"
     }
 });
 

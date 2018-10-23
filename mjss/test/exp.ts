@@ -2,6 +2,7 @@
 /* eslint-env jest */
 
 import Exp from '../src/plugins/Exp';
+import {toVarName} from '../src/plugins/Exp/lib';
 
 export default {
     options: (test) => ({plugins: [new Exp(test.opts)]}),
@@ -181,6 +182,41 @@ export default {
             },
             css: '.class{width:10px;color:red;}'
         },
+        'extractExpressions': {
+            opts: {
+                extractExpressions: true
+            },
+            jss: {
+                '@env': {
+                    color: 'red',
+                    a: 1,
+                    b: 1,
+                    add:(a,b) => a + b,
+                    width: "/call('add', env('a'), env('b'))/"
+                },
+                '.class': {
+                    color: "/env('color')/",
+                    width: "/env('width')/"
+                }
+            },
+            css: `.class{color: var(${toVarName("/env('color')/")});width:var(${toVarName("/env('width')/")});}`,
+            test(sheet, actions) {
+                const varName = toVarName("/env('color')/");
+                const varName2 = toVarName("/env('width')/");
+                const exp = sheet.options.plugins[0];
+                actions.compare(sheet.toString(), this.css);
+                actions.compare(exp.env.extractedExpressions[varName].eval(), 'red');
+                actions.compare(String(exp.env.extractedExpressions[varName2].eval()), '2');
+                actions.compare(exp.env.toString(), `
+                    :root {
+                        ${varName}: red;
+                        ${varName2}: 2;
+                    }
+                `);
+                actions.compare(String(exp.env.get('width')), "2");
+            }
+        },
+
         'call function by call': {
             opts: {
                 context: {

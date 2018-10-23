@@ -5,7 +5,6 @@ export default class ContainerRuleRenderer extends RuleListRenderer {
 
     rule: ContainerRule
     key: any
-    value: any
 
     constructor(rule: ContainerRule, parent: RuleListRenderer = null) {
 
@@ -13,8 +12,7 @@ export default class ContainerRuleRenderer extends RuleListRenderer {
 
         assign(this, {
             rule,
-            key: rule.key,
-            value: rule.value
+            key: rule.key
         });
     }
 

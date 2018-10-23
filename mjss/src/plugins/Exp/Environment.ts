@@ -2,7 +2,7 @@ import Rule from "../../Rule";
 import { Exp } from "..";
 import ContainerRule from "../../ContainerRule";
 import Import from "../../Import";
-import { isFunction, isPlainObject, mapValues, last } from "lodash";
+import { isFunction, isPlainObject, mapValues, last, reduce } from "lodash";
 import MixinCall from "./MixinCall";
 import { Sheet } from "../../..";
 
@@ -30,6 +30,7 @@ export default class Environment {
     context: any
     rules:any = {}
     sheet: Sheet
+    extractedExpressions: any = {}
 
     constructor(exp: Exp, sheet: Sheet) {
 
@@ -48,6 +49,10 @@ export default class Environment {
 
         this.cache = mapValues(this.rules, (rule:Rule) => rule instanceof ContainerRule ? rule : rule.value);
 
+    }
+
+    toString() {
+        return `:root{\n${reduce(this.extractedExpressions, (res, obj) => res + `${obj.name}:${obj.eval()};`, '')}}`;
     }
 
     prepare() {
