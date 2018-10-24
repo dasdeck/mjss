@@ -16,6 +16,14 @@ export default class ContainerRuleRenderer extends RuleListRenderer {
         });
     }
 
+    toRule():any {
+        return this.children.length && {
+            key: this.key,
+            children: this.children.map((child:any) => child.toRule()).filter(c => c),
+            class: 'ContainerRuleRenderer'
+        }
+    }
+
     toString() {
         const rulesCss = super.toString();
         return rulesCss && `${this.key}{${rulesCss}}` || '';

@@ -21,6 +21,13 @@ export default class DirectiveRenderer implements Stringable {
 
     }
 
+    toRule():any  {
+        return {
+            value: this.value,
+            class: 'DirectiveRenderer'
+        }
+    }
+
     toString() {
         return `${this.value};`;
     }

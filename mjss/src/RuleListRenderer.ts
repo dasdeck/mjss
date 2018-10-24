@@ -25,6 +25,10 @@ export default class RuleListRenderer implements Stringable {
         }
     }
 
+    toRule():any  {
+        return this.children.map((child:any) => child.toRule()).filter(c => c);
+    }
+
     toString() {
 
         return <string>this.children.reduce((e, v) => e + v.toString(), '');

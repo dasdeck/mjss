@@ -23,6 +23,14 @@ export default class RuleRender implements Stringable {
 
     }
 
+    toRule() {
+        return {
+            key: this.key,
+            value: String(this.value),
+            class: 'RuleRenderer'
+        }
+    }
+
     toString() {
         return `${this.key}:${String(this.value)};`;
     }
