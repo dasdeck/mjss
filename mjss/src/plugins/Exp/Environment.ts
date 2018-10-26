@@ -42,13 +42,14 @@ export default class Environment {
 
         this.exp.options.env = this.exp.options.env || {}
 
-
     }
 
     buildCache() {
-
-        this.cache = mapValues(this.rules, (rule:Rule) => rule instanceof ContainerRule ? rule : rule.value);
-
+        this.cache = {};
+        for (const key in this.rules) {
+            const rule = this.rules[key];
+            this.cache[key] = rule instanceof ContainerRule ? rule : rule.value;
+        }
     }
 
     toString() {
@@ -56,12 +57,15 @@ export default class Environment {
     }
 
     prepare() {
+
         this.rules = mapValues(this.rules, (data, key) => this.sheet.createRule(data, key, null));
-        this.sheet.iterateAst(this.rules, rule => this.sheet.hook('onReady', rule));
 
         if (this.exp.options.cacheEnv) {
             this.buildCache();
         }
+
+        this.sheet.iterateAst(this.rules, rule => this.sheet.hook('onReady', rule));
+
     }
 
 

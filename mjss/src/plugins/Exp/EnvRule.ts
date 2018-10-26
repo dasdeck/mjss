@@ -1,7 +1,7 @@
 // import ContainerRule from "../../ContainerRule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
 import Exp from ".";
-import {merge, isPlainObject, size} from 'lodash';
+import {isPlainObject, cloneDeep} from 'lodash';
 import { Sheet } from "../../..";
 import Rule from "../../Rule";
 
@@ -19,18 +19,18 @@ export default class EnvRule extends Rule {
 
             const ruleToAdd = data[key];
 
-            // if (size(ruleToAdd)) {
+            if (key in this.exp.env.rules && isPlainObject(ruleToAdd))  {
 
-                if (key in this.exp.env.rules && isPlainObject(ruleToAdd))  {
-
-                    const merged = merge({}, this.exp.env.rules[key]);
-
-                    iteratedMerge(merged, ruleToAdd);
-                    this.exp.env.rules[key] = merged;
-                } else {
-                    this.exp.env.rules[key] = ruleToAdd;
+                const rule = this.exp.env.rules[key];
+                const copy = {};
+                for (const k in rule) {
+                    copy[k] = rule[k];
                 }
-            // }
+
+                this.exp.env.rules[key] = iteratedMerge(copy, ruleToAdd);
+            } else {
+                this.exp.env.rules[key] = ruleToAdd;
+            }
 
         }
     }

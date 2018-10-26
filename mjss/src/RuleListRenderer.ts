@@ -25,8 +25,26 @@ export default class RuleListRenderer implements Stringable {
         }
     }
 
-    toRule():any  {
-        return this.children.map((child:any) => child.toRule()).filter(c => c);
+    patch(old):any  {
+        if (this.children.length !== old.children.length) {
+            throw 'structural mismatch';
+        }
+
+        const patches = [];
+
+        for (let i = 0; i < this.children.length; i++) {
+            const oldChild:any = old.children[i];
+            const newChild:any = this.children[i];
+            const patch = newChild.patch(oldChild);
+            if (patch) {
+                patches.push({
+                    i,
+                    patch
+                });
+            }
+        }
+
+        return patches.length && patches;
     }
 
     toString() {

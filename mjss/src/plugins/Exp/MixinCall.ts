@@ -2,8 +2,7 @@ import {values} from "lodash";
 import Exp from ".";
 import ContainerRule from "../../ContainerRule";
 import ContainerRuleRenderer from "../../ContainerRuleRenderer";
-import RuleRender from "../../RuleRenderer";
-import EnvRule from "./EnvRule";
+import RuleRenderer from "../../RuleRenderer";
 import Renderable from "../../interface/Renderable";
 import Environment from "./Environment";
 
@@ -52,7 +51,7 @@ export default class MixinCall implements Renderable {
 function forceUniqueKeys(renderer:ContainerRuleRenderer) {
     let i = 0;
     renderer.children = values(renderer.children.reduce((last, next) => {
-        if (next instanceof RuleRender) {
+        if (next instanceof RuleRenderer) {
             last[next.key] = next;
         } else if(next instanceof ContainerRuleRenderer) { //containerRules can be double
             last[i++] = next;

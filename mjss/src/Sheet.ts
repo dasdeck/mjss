@@ -22,6 +22,7 @@ export default class Sheet {
             'createRule',
 
             'onProcess',
+            'onBeforeRender',
             'onBeforeOutput',
             'onSelectorChanged'
         ].reduce((res, hookName) => {
@@ -82,6 +83,7 @@ export default class Sheet {
     }
 
     toRenderer() {
+        this.hook('onBeforeRender', this);
         const renderer = new RuleListRenderer(this.rules);
         this.rules.render(renderer);
         this.hook('onBeforeOutput', renderer);

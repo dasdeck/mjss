@@ -7,13 +7,24 @@ export default class UnitNumber {
 
         if (!unit && typeof value === 'string') {
             this.val = parseFloat(value);
-            this.unit = value.replace(String(this.val), '');
+            this.unit = value.replace(this.val.toString(), '');
         } else {
             this.val = value;
             this.unit = unit || '';
         }
 
         this.val = Math.round(this.val * 100000) / 100000; // round to same digit as less-css
+
+    }
+
+    withIncrement(increment) {
+
+        if (Math.abs(increment) < 1) {
+            const factor = 1/increment;
+            return new UnitNumber(Math.round((this.val + increment) * factor) / factor, this.unit);
+        } else {
+            return new UnitNumber(this.val + increment, this.unit);
+        }
 
     }
 
@@ -26,7 +37,6 @@ export default class UnitNumber {
     }
 
     getFinestResolution() {
-
         const decimals = this.getDecimals();
         if(decimals) {
             const size = Math.pow(10, -decimals);
@@ -37,10 +47,18 @@ export default class UnitNumber {
     }
 
     getDecimals() {
-        return (String(this.val).split('.')[1] || '').length;
+        return (this.val.toString().split('.')[1] || '').length;
     }
 
-    static create(value) {
+    static createOrZero(value) {
+        try {
+            return UnitNumber.create(value);
+        } catch (e) {
+            return new UnitNumber(0);
+        }
+    }
+
+    static create(value, always = false) {
 
         if (value instanceof UnitNumber) {
 
@@ -56,11 +74,11 @@ export default class UnitNumber {
 
             const hasUnits = floatVal != value; // eslint-disable-line
 
-            // if (hasUnits) {
+            if (hasUnits || always) {
                 return new UnitNumber(value);
-            // } else {
-                // return floatVal;
-            // }
+            } else {
+                return floatVal;
+            }
 
         }
     }

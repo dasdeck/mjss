@@ -23,7 +23,7 @@ export default class DynamicContainerRule extends ContainerRule {
 
     render(renderer: ContainerRuleRenderer) {
         const key = this.key;
-        if (key instanceof Object && key.render) {
+        if (key.render) {
             key.render(renderer);
         } else if (key === true) {
             this.rules.render(renderer);

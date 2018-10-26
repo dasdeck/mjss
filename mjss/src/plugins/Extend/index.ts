@@ -10,12 +10,20 @@ make shure not to midify keys after they have been extended
 
 export default class Extend {
 
-    extends: any = {}
+    extends: any
     options: any
-    renderers: Array<any> = []
+    renderers: Array<any>
 
     constructor(options: any = {}) {
         this.options = options;
+    }
+
+    onInit() {
+        this.extends = {};
+    }
+
+    onBeforeRender() {
+        this.renderers = [];
     }
 
     onReady(rule) {

@@ -46,35 +46,35 @@ class Transformation {
 
             const set = rule.value.all ? extendMap.all : extendMap._;
 
-            let entry = set[rule.className] || {selectors: [], search: rule.search};
+            let entry = set[rule.className] || {selectors: [], replace: rule.replace};
             entry.selectors = [...entry.selectors, ...rule.getTargetSelectors()];
             set[rule.className] = entry;
 
         }
 
-        const newSelectors = [];
+        let newSelectors = '';
 
         forEach(extendMap.all, (entry:any) => {
-            const selectors = this.getOriginalSelectors().map(selector => {
-                const res = selector.replace(entry.search, (a,b,c) => `${b}%%${c}`).split('%%');
+            const templates = this.getOriginalSelectors().map(selector => {
+                const res = selector.replace(entry.replace, (_,b,c) => `${b}%%${c}`).split('%%');
                 return res.length > 1 ? selector => res.join(selector) : null;
             }).filter(v => v);
 
             entry.selectors.forEach(targetSelector => {
-                selectors.forEach(selector => {
-                    newSelectors.push(selector(targetSelector));
+                templates.forEach(template => {
+                    newSelectors += ',' + template(targetSelector);
                 });
             });
         });
 
         forEach(extendMap._, (entry:any) => {
             entry.selectors.forEach(targetSelector => {
-                newSelectors.push(targetSelector);
+                newSelectors += ',' + targetSelector;
             });
         });
 
 
-        this.renderer.key = [this.renderer.key, ...newSelectors].join(', ');
+        this.renderer.key += newSelectors;
     }
 }
 export default class ExtendRule extends Rule {
@@ -100,9 +100,9 @@ export default class ExtendRule extends Rule {
         const search = escapeRegExp(className.substr(prefix.length));
         this.className = className;
         if (this.value.all) {
-            this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-\\]|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
+            this.search = new RegExp(/()(?:prefix(?:\b)search)+(\b[^-\\]|$)/.source.replace('prefix', prefix).replace('search', search));
         } else {
-            this.search = new RegExp(/((?:,|^)\s*)(?:prefix(?:\b)search)(\b\s*(?:,|$)|$)/.source.replace('prefix', prefix).replace('search', search), 'g');
+            this.search = new RegExp(/((?:,|^)\s*)(?:prefix(?:\b)search)(\b\s*(?:,|$)|$)/.source.replace('prefix', prefix).replace('search', search));
         }
 
         this.replace  = new RegExp(this.search.source, 'g');
@@ -110,7 +110,7 @@ export default class ExtendRule extends Rule {
     }
 
     matches(key) {
-        return key.includes(this.className) && key.match(this.search);
+        return ~key.indexOf(this.className) && key.match(this.search);
     }
 
     mark(rule) {

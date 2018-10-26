@@ -15,7 +15,7 @@ export default class Exp {
     }
 
     onInit(sheet) {
-        this.env = new Environment(this, sheet); //new EnvRule(sheet, this, sheet.data['@env']);
+        this.env = new Environment(this, sheet);
     }
 
     onSheetReady() {

@@ -13,7 +13,7 @@ export default class Rule extends Directive {
     }
 
     render(renderer: RuleListRenderer) {
-        const ruleRenderer = new RuleRender(this, renderer);
+        const ruleRenderer = new RuleRender(this);
         this.sheet.hook('onProcess', ruleRenderer);
         renderer.children.push(ruleRenderer);
     }

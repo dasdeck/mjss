@@ -1,35 +1,29 @@
 // import * as Color from 'color';
 import * as Color from 'tinycolor2';
 
+function ColorImmutable(input) {
+    // performance hack to ensure immutable colors
+    return Color(input instanceof Object ? input.toString() : input);
+}
+
 Color.prototype.toString = function() {
     return (this.getAlpha() < 1 ? this.toRgbString() : ('#' + this.toHex()).toLowerCase());
 };
 
 /**
- * a set of functions emulating the behaviour of lesscss (% will be assumed to be normalized to 0-1)
+ * a set of functions emulating the behaviour of lesscss
  */
 
-/* [
-    "darken",
-    "fade",
-    "lighten",
-    "fadeout",
-    "desaturate",
-    "saturate",
-     "spin",
-     "mix"
-]*/
-
 export function darken(color, amount) {
-    return Color(color.toString()).darken(parseFloat(amount));
+    return ColorImmutable(color).darken(parseFloat(amount));
 }
 
 export function lighten(color, amount) {
-    return Color(color.toString()).lighten(parseFloat(amount));
+    return ColorImmutable(color).lighten(parseFloat(amount));
 }
 
 export function fadeout(color, amount) {
-    color = Color(color.toString());
+    color = ColorImmutable(color);
 
     amount = parseFloat(amount) / 100;
     color = color.setAlpha(color.getAlpha() - amount);
@@ -41,27 +35,27 @@ export function saturate(color, amount) {
 
     amount = parseFloat(amount);
 
-    return Color(color.toString()).saturate(amount);
+    return ColorImmutable(color).saturate(amount);
 }
 
 export function desaturate(color, amount) {
-    return saturate(color.toString(), `-${amount}`);
+    return saturate(color, `-${amount}`);
 }
 
 export function spin(color, amount) {
-    return Color(color.toString()).spin(parseFloat(amount));
+    return ColorImmutable(color).spin(parseFloat(amount));
 }
 
 export function tint(color, amount) {
-    return mix(Color({r: 255, g: 255, b: 255}), Color(color.toString()), amount);
+    return mix(Color({r: 255, g: 255, b: 255}), ColorImmutable(color), amount);
 }
 
 export function mix(color, color2, amount = '50%') {
-    return Color.mix(Color(color2.toString()), Color(color.toString()), parseFloat(amount)-0.0001);
+    return Color.mix(ColorImmutable(color2), ColorImmutable(color), parseFloat(amount)-0.0001);
 }
 
 export function fade(color, amount) {
-    return Color(color.toString()).setAlpha(parseFloat(amount) / 100);
+    return ColorImmutable(color).setAlpha(parseFloat(amount) / 100);
 }
 
 

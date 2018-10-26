@@ -1,6 +1,11 @@
 import { isObject, isFunction } from "lodash";
 
-
+/**
+ * merges two objects, prevents keys from being overwritten by iterating an extra id
+ * @param a
+ * @param b
+ * @param id
+ */
 export function iteratedMerge(a, b, id:any = true) {
 
     for (const key in b) {
@@ -33,6 +38,8 @@ export function iteratedMerge(a, b, id:any = true) {
 
         }
     }
+
+    return a;
 
 }
 
