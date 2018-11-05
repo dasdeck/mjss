@@ -19,6 +19,11 @@
 
 	],
 	"settings": {
+		"cSpell.words": [
+			"mjss",
+			"roundtrip",
+			"Stringable"
+		],
 		"files.exclude": {
 			"**/.git": true,
 			"**/.svn": true,

@@ -22,6 +22,14 @@ export default {
                 }
             },
             css: '@media only screen and (max-width: 600px){.class1{color:black;}}'
+        },
+        {
+
+            desc: 'directives',
+            jss: {
+                "@import 'test.css'": ''
+            },
+            css: "@import 'test.css';"
         }
     ]
 };

@@ -17,20 +17,18 @@ export default class DirectiveRenderer implements Stringable {
         this.parent = parent;
         this.sheet = rule.sheet;
         this.rule = rule;
-        // fastes way of convert to string of number
+        // fastest way of convert to string of number
         this.value = rule.value instanceof Object ? rule.value.toString() : rule.value;
 
     }
 
     patch(old)  {
-        const newValue = this.value;
-        if (this.value !== newValue) {
-            old.value = newValue;
+        if (old.value !== this.value) {
+            old.value = this.value;
             return {
                 value: this.value,
             }
         }
-
     }
 
     toString() {

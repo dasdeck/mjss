@@ -121,6 +121,7 @@ export default {
             css: '@supports{.class{color:red;}}'
         }
 
+
     ]
 };
 

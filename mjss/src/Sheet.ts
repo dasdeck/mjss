@@ -3,6 +3,7 @@ import RuleListRenderer from './RuleListRenderer';
 import { forEach, isPlainObject } from 'lodash';
 import ContainerRule from './ContainerRule';
 import Rule from './Rule';
+import Directive from './Directive';
 
 export default class Sheet {
 
@@ -74,7 +75,11 @@ export default class Sheet {
         let rule = this.hook('createRule', this, data, cleanKey, parent);
         if (!rule) {
             if (!isPlainObject(data)) {
-                rule = new Rule(this, data, cleanKey, parent);
+                if (data === '') {
+                    rule = new Directive(this, cleanKey, parent);
+                } else {
+                    rule = new Rule(this, data, cleanKey, parent);
+                }
             } else {
                 rule = new ContainerRule(this, data, cleanKey, parent);
             }

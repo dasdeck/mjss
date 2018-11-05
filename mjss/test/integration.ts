@@ -1,13 +1,14 @@
 import Extend from '../src/plugins/Extend';
 import Exp from '../src/plugins/Exp';
 import Nest from '../src/plugins/Nest';
+import { Sheet } from '..';
 
 export default {
     options: test => {
         const extend = new Extend(test.extend);
         return {
             plugins: [
-                new Exp,
+                new Exp(test.exp),
                 new Nest(test.nest),
                 extend
             ]}
@@ -107,6 +108,87 @@ export default {
                 "/call('mixin')/": {}
             },
             css: '.extender{color:green;}.target, .extender{color:red;}'
+        },
+        'import from anywhere': {
+            jss: {
+                '.class': {
+                    color: 'red',
+                    "/call('import', 'test.css')/": {}
+                }
+            },
+            css: "@import 'test.css';.class{color:red;}"
+        },
+        'test unique keys (nest)': {
+            exp: {forceUniqueKeys: true},
+            jss: {
+                '@env': {
+                    mixin: {
+                        color: "/env('color')/",
+                        '.subclass': {
+                            color: "/env('color')/"
+                        }
+                    },
+                },
+                '.class': {
+                    "/call('mixin', {color: 'red'})/": {},
+                    "/call('mixin', {color: 'blue'})/": {},
+                    color: 'green'
+                }
+            },
+            css: '.class{color:green;} .class .subclass {color:red;} .class .subclass {color:blue;}'
+        },
+        'basic patch': {
+            test(sheet:Sheet, actions) {
+                const renderer1 = sheet.toRenderer();
+
+                actions.compare(renderer1.toString(), this.css);
+
+                const exp:Exp = sheet.options.plugins[0];
+                exp.options.env = {
+                    var1: 'blue',
+                    path1: 'test2.css'
+                };
+
+                exp.env.buildCache();
+
+                const renderer2 = sheet.toRenderer();
+
+                const patch = renderer2.patch(renderer1);
+
+                expect(patch).toEqual([
+                    {
+                        i: 0,
+                        patch: {
+                            value: "@import 'test2.css'"
+                        }
+                    },
+                    {
+                        i: 1,
+                        patch: [
+                            {
+                                i:0,
+                                patch: {
+                                    key: 'color',
+                                    value: 'blue',
+                                    priority: undefined
+                                }
+                            }
+                        ]
+                    }
+                ])
+
+            },
+            jss: {
+                '@env':{
+                    var1: 'red',
+                    path1: 'test.css'
+                },
+                "/call('import', env('path1'))/": {},
+                '.class1': {
+                    color: "/env('var1')/"
+                }
+            },
+            css: "@import 'test.css';.class1{color:red;}"
         }
 
     }

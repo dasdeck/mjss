@@ -156,13 +156,9 @@ export default class ExtendRule extends Rule {
 
     collect(renderer) {
 
-        if (renderer.rule instanceof ExtendRule) {
-            return
-        }
         if (renderer.key && this.matches(renderer.key)) {
             this.addTransform(renderer);
         }
-
 
     }
 

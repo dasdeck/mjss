@@ -1,6 +1,6 @@
 
 import * as suites from '..';
-import {pickBy, isObject, forEach, isString} from 'lodash';
+import {pickBy, isObject, forEach, isString, isUndefined} from 'lodash';
 
 import * as less from 'less';
 import {css_beautify} from 'js-beautify';

@@ -144,22 +144,29 @@ export default {
                 }
             `
          },
+
          {
-            desc: 'multi target',
+            desc: 'multi & multi target',
             jss: {
                 ".extender": {
-                "@extend .target": {
-                    "all": true
-                }
+                    "@extend .target": {
+                        "all": true
+                    }
+                },
+                ".extender2": {
+                    "@extend .target": {
+                        "all": true
+                    }
                 },
                 ".target, .extraSelector": {
-                "color": "red"
+                    "color": "red"
                 }
             },
             css: `
                 .target,
                 .extraSelector,
-                .extender {
+                .extender,
+                .extender2 {
                     color: red;
                 }
             `

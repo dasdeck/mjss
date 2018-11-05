@@ -3,9 +3,9 @@ import ExtendRule from './ExtendRule';
 import {patternExtend} from './lib';
 
 /*
-extend may set the result key to a renderable object because it needs to be lazy
+extend may set the result key to a render-able object because it needs to be lazy
 to ensure it extends target rules with its final parent
-make shure not to midify keys after they have been extended
+make sure not to modify keys after they have been extended
 */
 
 export default class Extend {
@@ -81,6 +81,8 @@ export default class Extend {
         if (this.options.assumeStaticSelectors) {
 
             delete renderer.rule._extend;
+
+            /* istanbul ignore next */
             if (renderer._extend) {
                 delete renderer._extend.rules;
             }

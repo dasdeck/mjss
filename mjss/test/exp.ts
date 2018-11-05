@@ -213,6 +213,9 @@ export default {
                         ${varName2}: 2;
                     }
                 `);
+
+                actions.compare(toVarName(''), "--exp0");
+
                 actions.compare(String(exp.env.get('width')), "2");
             }
         },

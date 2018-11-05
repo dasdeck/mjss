@@ -16,10 +16,6 @@ export default class Directive implements Renderable {
         this.parent = parent;
     }
 
-    valueOf() {
-        return this.value;
-    }
-
     render(renderer: RuleListRenderer) {
         const ruleRenderer = new DirectiveRenderer(this, renderer);
         this.sheet.hook('onProcess', ruleRenderer);

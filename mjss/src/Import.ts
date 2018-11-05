@@ -16,8 +16,9 @@ export default class Import extends Directive {
             renderer = renderer.parent;
         }
 
-        const value = ~['"', "'"].indexOf(ruleRenderer.value[0]) ? ruleRenderer.value : `'${ruleRenderer.value}'`;
-        renderer.children.unshift(`@import ${value};`);
+        ruleRenderer.value =  `@import ${~['"', "'"].indexOf(ruleRenderer.value[0]) ? ruleRenderer.value : `'${ruleRenderer.value}'`}`;
+
+        renderer.children.unshift(ruleRenderer);
     }
 
 }
